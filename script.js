@@ -1,4 +1,4 @@
-// handle button click actions
+
 
 // Track current editing employee ID (null if adding new)
 let currentEditingEmployeeId = null;
@@ -19,6 +19,14 @@ addEmployeeBtn.addEventListener("click", () => {
   } else {
     employeeForm.style.display = "none";
   }
+});
+
+// Handle cancel button click
+const cancelFormBtn = document.getElementById("cancel-form-btn");
+cancelFormBtn.addEventListener("click", () => {
+  employeeForm.reset();
+  employeeForm.style.display = "none";
+  currentEditingEmployeeId = null;
 });
 
 // Handle form submission

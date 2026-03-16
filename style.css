@@ -10,7 +10,11 @@ h1 {
   margin-top: 20px;
 }
 
-/* Button Container */
+/* ============================================
+   BUTTON STYLES
+   ============================================ */
+
+/* Button Container - Centers buttons under h1 */
 .button-container {
   display: flex;
   justify-content: center;
@@ -18,8 +22,8 @@ h1 {
   margin: 20px auto;
 }
 
-/* Button Centering */
-.button-container button {
+/* Add Employee Button */
+#add-employee-btn {
   padding: 12px 24px;
   background-color: #5e4caf;
   color: white;
@@ -31,10 +35,30 @@ h1 {
   font-weight: 500;
 }
 
-/* Hover effect for buttons */
-.button-container button:hover {
+#add-employee-btn:hover {
   background-color: #7c7bda;
 }
+
+/* Generate Schedule Button */
+#generate-schedule-btn {
+  padding: 12px 24px;
+  background-color: #1e3a5f;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+#generate-schedule-btn:hover {
+  background-color: #5e8bb5;
+}
+
+/* ============================================
+   END BUTTON STYLES
+   ============================================ */
 
 /* Main Layout Container */
 .main-container {
@@ -218,10 +242,20 @@ h1 {
   flex: 1;
 }
 
+/* ============================================
+   FORM BUTTON STYLES
+   ============================================ */
+
+/* Form Button Group - Container for submit and cancel buttons */
+.form-button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
 /* Submit Employee Button */
 #submit-employee-btn {
-  display: block;
-  margin: 20px auto;
+  flex: 1;
   padding: 10px 20px;
   background-color: #5e4caf;
   color: white;
@@ -229,8 +263,30 @@ h1 {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
+  font-weight: 500;
 }
 
 #submit-employee-btn:hover {
   background-color: #7c7bda;
 }
+
+/* Cancel Form Button */
+#cancel-form-btn {
+  flex: 1;
+  padding: 10px 20px;
+  background-color: #8b1538;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-weight: 500;
+}
+
+#cancel-form-btn:hover {
+  background-color: #c41e3a;
+}
+
+/* ============================================
+   END FORM BUTTON STYLES
+   ============================================ */
