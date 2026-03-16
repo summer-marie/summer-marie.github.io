@@ -1,5 +1,3 @@
-
-
 // Track current editing employee ID (null if adding new)
 let currentEditingEmployeeId = null;
 
@@ -244,7 +242,8 @@ function generateSchedule() {
   const tableWrapper = document.getElementById("schedule-table-wrapper");
 
   if (employees.length === 0) {
-    tableWrapper.innerHTML = "<p style='text-align: center; color: #666;'>No employees added yet. Please add employees first.</p>";
+    tableWrapper.innerHTML =
+      "<p style='text-align: center; color: #666;'>No employees added yet. Please add employees first.</p>";
     return;
   }
 
@@ -263,24 +262,34 @@ function generateSchedule() {
   let tableHTML = '<table class="schedule-table"><thead><tr><th>Employee</th>';
 
   // Add date headers
-  dates.forEach(date => {
-    const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
-    const dateStr = date.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
+  dates.forEach((date) => {
+    const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
+    const dateStr = date.toLocaleDateString("en-US", {
+      month: "numeric",
+      day: "numeric",
+    });
     tableHTML += `<th>${dayName}<br>${dateStr}</th>`;
   });
 
-  tableHTML += '</tr></thead><tbody>';
+  tableHTML += "</tr></thead><tbody>";
 
   // Add rows for each employee
-  employees.forEach(employee => {
+  employees.forEach((employee) => {
     tableHTML += `<tr><td class="employee-name">${employee.firstName} ${employee.lastName}</td>`;
 
     // Add cells for each date
-    dates.forEach(date => {
-      const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+    dates.forEach((date) => {
+      const dayOfWeek = date
+        .toLocaleDateString("en-US", { weekday: "long" })
+        .toLowerCase();
       const daySchedule = employee.schedule[dayOfWeek];
 
-      if (daySchedule && daySchedule.available && daySchedule.start && daySchedule.end) {
+      if (
+        daySchedule &&
+        daySchedule.available &&
+        daySchedule.start &&
+        daySchedule.end
+      ) {
         // Format time as abbreviated (e.g., "7-3" for 7:00-15:00)
         const startTime = formatTime(daySchedule.start);
         const endTime = formatTime(daySchedule.end);
@@ -290,20 +299,166 @@ function generateSchedule() {
       }
     });
 
-    tableHTML += '</tr>';
+    tableHTML += "</tr>";
   });
 
-  tableHTML += '</tbody></table>';
+  tableHTML += "</tbody></table>";
   tableWrapper.innerHTML = tableHTML;
 }
 
 // Helper function to format time (convert 14:00 to 2, 09:00 to 9, etc.)
 function formatTime(time) {
-  if (!time) return '';
-  const [hours, minutes] = time.split(':');
+  if (!time) return "";
+  // Split time into hours and minutes
+  const [hours, minutes] = time.split(":");
+  // Convert hours to integer
   let hour = parseInt(hours);
-  
+
   // Convert to 12-hour format or keep as 24-hour, abbreviated
   // For simplicity, just return the hour
   return hour.toString();
+}
+
+// ============================================
+// TEST DATA GENERATION
+// ============================================
+
+const testDataBtn = document.getElementById("test-data-btn");
+const testDataOverlay = document.getElementById("test-data-form-overlay");
+const testDataForm = document.getElementById("test-data-form");
+const cancelTestFormBtn = document.getElementById("cancel-test-form-btn");
+
+// Show test data form
+testDataBtn.addEventListener("click", () => {
+  testDataOverlay.style.display = "flex";
+});
+
+// Hide test data form
+cancelTestFormBtn.addEventListener("click", () => {
+  testDataOverlay.style.display = "none";
+  testDataForm.reset();
+});
+
+// Close overlay when clicking outside the form
+testDataOverlay.addEventListener("click", (e) => {
+  if (e.target === testDataOverlay) {
+    testDataOverlay.style.display = "none";
+    testDataForm.reset();
+  }
+});
+
+// Generate test data
+testDataForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const numEmployees = parseInt(document.getElementById("num-employees").value);
+  const jobTitle = document.getElementById("job-title-test").value;
+  const shiftStart = document.getElementById("shift-start").value;
+  const shiftEnd = document.getElementById("shift-end").value;
+
+  // Arrays of random first and last names for randomizer
+  const firstNames = [
+    "Emma", "Liam", "Olivia", "Noah", "Ava", "Ethan", "Sophia", "Mason",
+    "Isabella", "William", "Mia", "James", "Charlotte", "Benjamin", "Amelia",
+    "Lucas", "Harper", "Henry", "Evelyn", "Alexander", "Abigail", "Michael",
+    "Emily", "Daniel", "Elizabeth", "Matthew", "Sofia", "Jackson", "Avery",
+    "Sebastian", "Ella", "Jack", "Scarlett", "Aiden", "Grace", "Owen", "Chloe",
+    "Samuel", "Victoria", "Joseph", "Riley", "John", "Aria", "David", "Lily"
+  ];
+
+  const lastNames = [
+    "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis",
+    "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson",
+    "Thomas", "Taylor", "Moore", "Jackson", "Martin", "Lee", "Perez", "Thompson",
+    "White", "Harris", "Sanchez", "Clark", "Ramirez", "Lewis", "Robinson", "Walker",
+    "Young", "Allen", "King", "Wright", "Scott", "Torres", "Nguyen", "Hill", "Flores",
+    "Green", "Adams", "Nelson", "Baker", "Hall", "Rivera", "Campbell"
+  ];
+
+  // Generate employees
+  for (let i = 0; i < numEmployees; i++) {
+    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+
+    // Generate random work days (3-6 days per week, with 5 being most common)
+    const workDays = generateRandomWorkDays();
+
+    const employee = {
+      id: Date.now() + i, // Unique ID
+      jobTitle: jobTitle,
+      firstName: firstName,
+      lastName: lastName,
+      schedule: {
+        monday: {
+          available: workDays.includes('monday'),
+          start: workDays.includes('monday') ? shiftStart : '',
+          end: workDays.includes('monday') ? shiftEnd : ''
+        },
+        tuesday: {
+          available: workDays.includes('tuesday'),
+          start: workDays.includes('tuesday') ? shiftStart : '',
+          end: workDays.includes('tuesday') ? shiftEnd : ''
+        },
+        wednesday: {
+          available: workDays.includes('wednesday'),
+          start: workDays.includes('wednesday') ? shiftStart : '',
+          end: workDays.includes('wednesday') ? shiftEnd : ''
+        },
+        thursday: {
+          available: workDays.includes('thursday'),
+          start: workDays.includes('thursday') ? shiftStart : '',
+          end: workDays.includes('thursday') ? shiftEnd : ''
+        },
+        friday: {
+          available: workDays.includes('friday'),
+          start: workDays.includes('friday') ? shiftStart : '',
+          end: workDays.includes('friday') ? shiftEnd : ''
+        },
+        saturday: {
+          available: workDays.includes('saturday'),
+          start: workDays.includes('saturday') ? shiftStart : '',
+          end: workDays.includes('saturday') ? shiftEnd : ''
+        },
+        sunday: {
+          available: workDays.includes('sunday'),
+          start: workDays.includes('sunday') ? shiftStart : '',
+          end: workDays.includes('sunday') ? shiftEnd : ''
+        }
+      }
+    };
+
+    saveEmployee(employee);
+  }
+
+  // Refresh employee list
+  renderEmployeeList();
+
+  // Hide form and reset
+  testDataOverlay.style.display = "none";
+  testDataForm.reset();
+
+  alert(`Successfully generated ${numEmployees} test employees!`);
+});
+
+// Helper function to generate random work days
+// 3-6 days per week, with 5 being most common
+function generateRandomWorkDays() {
+  const allDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+  
+  // Weighted random number of days (5 is most common)
+  const numDaysRandom = Math.random();
+  let numDays;
+  if (numDaysRandom < 0.15) {
+    numDays = 3; // 15% chance
+  } else if (numDaysRandom < 0.30) {
+    numDays = 4; // 15% chance
+  } else if (numDaysRandom < 0.80) {
+    numDays = 5; // 50% chance (most common)
+  } else {
+    numDays = 6; // 20% chance (rare)
+  }
+
+  // Shuffle days and pick the first numDays
+  const shuffled = [...allDays].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, numDays);
 }

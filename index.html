@@ -9,7 +9,12 @@
   <body>
     <!-- Header - Employee Schedule Generator -->
     <h1>Employee Schedule Generator</h1>
-    
+
+    <!-- Test Data Button - Top Left -->
+    <button id="test-data-btn" class="test-data-button">
+      Generate Test Data
+    </button>
+
     <!-- Action Buttons -->
     <div class="button-container">
       <button id="add-employee-btn">Add Employee</button>
@@ -100,9 +105,9 @@
         </form>
 
         <!-- Schedule Display -->
-        <div id="schedule-container" style="display: none;">
+        <div id="schedule-container" style="display: none">
           <div class="schedule-header">
-            <h2>Generated Schedule</h2>
+            <h2>Current Schedule</h2>
             <div class="schedule-controls">
               <label for="weeks-select">Number of Weeks:</label>
               <select id="weeks-select">
@@ -121,9 +126,72 @@
       </main>
     </div>
 
+    <!-- Test Data Generation Form -->
+    <div id="test-data-form-overlay" class="form-overlay" style="display: none">
+      <div id="test-data-form-container" class="test-form-container">
+        <h2>Generate Test Data</h2>
+        <h3>
+          Use the form below to generate random employee data for testing
+          schedule generation.
+        </h3>
+        <form id="test-data-form">
+          <div class="test-form-group">
+            <label for="num-employees">Number of Employees:</label>
+            <input
+              type="number"
+              id="num-employees"
+              name="numEmployees"
+              min="1"
+              max="50"
+              value="5"
+              required
+            />
+          </div>
+
+          <div class="test-form-group">
+            <label for="job-title-test">Job Title:</label>
+            <input
+              type="text"
+              id="job-title-test"
+              name="jobTitleTest"
+              placeholder="e.g., Housekeeper, Server, Cook"
+              required
+            />
+          </div>
+
+          <div class="test-form-group">
+            <label for="shift-start">Shift Start Time:</label>
+            <input
+              type="time"
+              id="shift-start"
+              name="shiftStart"
+              value="07:00"
+              required
+            />
+          </div>
+
+          <div class="test-form-group">
+            <label for="shift-end">Shift End Time:</label>
+            <input
+              type="time"
+              id="shift-end"
+              name="shiftEnd"
+              value="15:00"
+              required
+            />
+          </div>
+
+          <div class="test-form-buttons">
+            <button type="submit" id="generate-test-data-btn">
+              Generate Employees
+            </button>
+            <button type="button" id="cancel-test-form-btn">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <!-- TODO: dynamically rendered table - generated schedule -->
-
-
 
     <script src="script.js"></script>
   </body>
