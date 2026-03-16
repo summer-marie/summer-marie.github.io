@@ -98,10 +98,32 @@
             </div>
           </div>
         </form>
+
+        <!-- Schedule Display -->
+        <div id="schedule-container" style="display: none;">
+          <div class="schedule-header">
+            <h2>Generated Schedule</h2>
+            <div class="schedule-controls">
+              <label for="weeks-select">Number of Weeks:</label>
+              <select id="weeks-select">
+                <option value="1">1 Week</option>
+                <option value="2">2 Weeks</option>
+                <option value="3">3 Weeks</option>
+                <option value="4">4 Weeks</option>
+              </select>
+              <button id="regenerate-schedule-btn">Regenerate</button>
+            </div>
+          </div>
+          <div id="schedule-table-wrapper">
+            <!-- Schedule table will be dynamically inserted here -->
+          </div>
+        </div>
       </main>
     </div>
 
     <!-- TODO: dynamically rendered table - generated schedule -->
+
+
 
     <script src="script.js"></script>
   </body>

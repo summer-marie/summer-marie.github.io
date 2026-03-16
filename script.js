@@ -212,3 +212,98 @@ function renderEmployeeList() {
 document.addEventListener("DOMContentLoaded", () => {
   renderEmployeeList();
 });
+
+// ============================================
+// SCHEDULE GENERATION
+// ============================================
+
+const generateScheduleBtn = document.getElementById("generate-schedule-btn");
+const scheduleContainer = document.getElementById("schedule-container");
+const weeksSelect = document.getElementById("weeks-select");
+const regenerateBtn = document.getElementById("regenerate-schedule-btn");
+
+// Generate schedule when button is clicked
+generateScheduleBtn.addEventListener("click", () => {
+  generateSchedule();
+  scheduleContainer.style.display = "block";
+  employeeForm.style.display = "none";
+});
+
+// Regenerate schedule when weeks change or regenerate button clicked
+regenerateBtn.addEventListener("click", () => {
+  generateSchedule();
+});
+
+weeksSelect.addEventListener("change", () => {
+  generateSchedule();
+});
+
+function generateSchedule() {
+  const employees = getEmployees();
+  const numberOfWeeks = parseInt(weeksSelect.value);
+  const tableWrapper = document.getElementById("schedule-table-wrapper");
+
+  if (employees.length === 0) {
+    tableWrapper.innerHTML = "<p style='text-align: center; color: #666;'>No employees added yet. Please add employees first.</p>";
+    return;
+  }
+
+  // Calculate dates for the schedule
+  const dates = [];
+  const today = new Date();
+  const daysToShow = numberOfWeeks * 7;
+
+  for (let i = 0; i < daysToShow; i++) {
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
+    dates.push(date);
+  }
+
+  // Create table HTML
+  let tableHTML = '<table class="schedule-table"><thead><tr><th>Employee</th>';
+
+  // Add date headers
+  dates.forEach(date => {
+    const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+    const dateStr = date.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
+    tableHTML += `<th>${dayName}<br>${dateStr}</th>`;
+  });
+
+  tableHTML += '</tr></thead><tbody>';
+
+  // Add rows for each employee
+  employees.forEach(employee => {
+    tableHTML += `<tr><td class="employee-name">${employee.firstName} ${employee.lastName}</td>`;
+
+    // Add cells for each date
+    dates.forEach(date => {
+      const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+      const daySchedule = employee.schedule[dayOfWeek];
+
+      if (daySchedule && daySchedule.available && daySchedule.start && daySchedule.end) {
+        // Format time as abbreviated (e.g., "7-3" for 7:00-15:00)
+        const startTime = formatTime(daySchedule.start);
+        const endTime = formatTime(daySchedule.end);
+        tableHTML += `<td class="shift-cell">${startTime}-${endTime}</td>`;
+      } else {
+        tableHTML += `<td class="shift-cell">-</td>`;
+      }
+    });
+
+    tableHTML += '</tr>';
+  });
+
+  tableHTML += '</tbody></table>';
+  tableWrapper.innerHTML = tableHTML;
+}
+
+// Helper function to format time (convert 14:00 to 2, 09:00 to 9, etc.)
+function formatTime(time) {
+  if (!time) return '';
+  const [hours, minutes] = time.split(':');
+  let hour = parseInt(hours);
+  
+  // Convert to 12-hour format or keep as 24-hour, abbreviated
+  // For simplicity, just return the hour
+  return hour.toString();
+}

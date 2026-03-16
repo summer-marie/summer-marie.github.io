@@ -290,3 +290,125 @@ h1 {
 /* ============================================
    END FORM BUTTON STYLES
    ============================================ */
+
+/* ============================================
+   SCHEDULE DISPLAY STYLES
+   ============================================ */
+
+/* Schedule Container */
+#schedule-container {
+  max-width: 100%;
+  margin: 30px auto;
+  padding: 25px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.schedule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.schedule-header h2 {
+  color: #1e3a5f;
+  margin: 0;
+}
+
+.schedule-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.schedule-controls label {
+  font-weight: 500;
+  color: #333;
+}
+
+.schedule-controls select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+#regenerate-schedule-btn {
+  padding: 8px 16px;
+  background-color: #1e3a5f;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-weight: 500;
+}
+
+#regenerate-schedule-btn:hover {
+  background-color: #5e8bb5;
+}
+
+/* Schedule Table Wrapper */
+#schedule-table-wrapper {
+  overflow-x: auto;
+  background-color: white;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+/* Schedule Table */
+.schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+.schedule-table th,
+.schedule-table td {
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+.schedule-table th {
+  background-color: #1e3a5f;
+  color: white;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+}
+
+.schedule-table td {
+  background-color: white;
+}
+
+.schedule-table td.employee-name {
+  text-align: left;
+  font-weight: 600;
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.schedule-table td.shift-cell {
+  font-size: 14px;
+  color: #1e3a5f;
+  font-weight: 500;
+}
+
+.schedule-table td.shift-cell:hover {
+  background-color: #e8f4f8;
+  cursor: pointer;
+}
+
+.schedule-table tr:nth-child(even) td:not(.employee-name) {
+  background-color: #fafafa;
+}
+
+/* ============================================
+   END SCHEDULE DISPLAY STYLES
+   ============================================ */
