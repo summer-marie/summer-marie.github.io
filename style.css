@@ -192,6 +192,25 @@ h1 {
   background-color: #7c7bda;
 }
 
+/* Job Title Header in Employee List */
+.job-title-header {
+  background-color: #4a4a4a;
+  color: #e0e0e0;
+  padding: 8px 12px;
+  margin: 15px 0 10px 0;
+  border-radius: 0;
+  border-left: 4px solid #666;
+  font-weight: 600;
+  font-size: 13px;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.job-title-header:first-child {
+  margin-top: 0;
+}
+
 /* Content Area for Employee Form */
 .content-area {
   flex: 1;
@@ -307,6 +326,24 @@ h1 {
 
 #cancel-form-btn:hover {
   background-color: #c41e3a;
+}
+
+/* Remove Employee Button */
+#remove-employee-btn {
+  width: 100%;
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #2b2b2b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-weight: 500;
+}
+
+#remove-employee-btn:hover {
+  background-color: #6c757d;
 }
 
 /* ============================================
@@ -427,8 +464,25 @@ h1 {
   cursor: pointer;
 }
 
-.schedule-table tr:nth-child(even) td:not(.employee-name) {
+.schedule-table tr:nth-child(even) td:not(.employee-name):not(.job-title-cell) {
   background-color: #fafafa;
+}
+
+/* Job Title Row in Schedule */
+.schedule-table tr.job-title-row {
+  background-color: #000000;
+}
+
+.schedule-table td.job-title-cell {
+  background-color: #000000;
+  color: white;
+  font-weight: 700;
+  text-align: center;
+  padding: 3px;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  border: 2px solid #000000;
 }
 
 /* ============================================

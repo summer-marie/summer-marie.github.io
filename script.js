@@ -9,6 +9,7 @@ const employeeForm = document.getElementById("employee-form");
 addEmployeeBtn.addEventListener("click", () => {
   currentEditingEmployeeId = null; // Reset to add mode
   employeeForm.reset(); // Clear form
+  document.getElementById("remove-employee-btn").style.display = "none"; // Hide remove button for new employee
   if (
     employeeForm.style.display === "none" ||
     employeeForm.style.display === ""
@@ -25,6 +26,20 @@ cancelFormBtn.addEventListener("click", () => {
   employeeForm.reset();
   employeeForm.style.display = "none";
   currentEditingEmployeeId = null;
+  document.getElementById("remove-employee-btn").style.display = "none";
+});
+
+// Handle remove employee button click
+const removeEmployeeBtn = document.getElementById("remove-employee-btn");
+removeEmployeeBtn.addEventListener("click", () => {
+  if (currentEditingEmployeeId && confirm("Are you sure you want to remove this employee?")) {
+    removeEmployee(currentEditingEmployeeId);
+    renderEmployeeList();
+    employeeForm.reset();
+    employeeForm.style.display = "none";
+    currentEditingEmployeeId = null;
+    removeEmployeeBtn.style.display = "none";
+  }
 });
 
 // Handle form submission
@@ -118,6 +133,13 @@ function getEmployees() {
   return employees ? JSON.parse(employees) : [];
 }
 
+// Remove employee from local storage
+function removeEmployee(employeeId) {
+  let employees = getEmployees();
+  employees = employees.filter((emp) => emp.id !== employeeId);
+  localStorage.setItem("employees", JSON.stringify(employees));
+}
+
 // Function to populate form with employee data
 function populateFormForEdit(employee) {
   currentEditingEmployeeId = employee.id;
@@ -144,8 +166,9 @@ function populateFormForEdit(employee) {
     document.getElementById(`${day}-end`).value = employee.schedule[day].end;
   });
 
-  // Show the form
+  // Show the form and remove button
   employeeForm.style.display = "block";
+  document.getElementById("remove-employee-btn").style.display = "block";
 }
 
 // Render employee list
@@ -156,34 +179,63 @@ function renderEmployeeList() {
   // Clear current list
   employeeList.innerHTML = "";
 
-  // Render each employee
+  // Group employees by job title
+  const groupedEmployees = {};
   employees.forEach((employee) => {
-    const card = document.createElement("div");
-    card.className = "employee-card";
+    // Normalize job title to avoid duplicates from different spacing/casing
+    const normalizedTitle = employee.jobTitle.trim().toLowerCase();
+    if (!groupedEmployees[normalizedTitle]) {
+      groupedEmployees[normalizedTitle] = {
+        displayTitle: employee.jobTitle.trim(),
+        employees: []
+      };
+    }
+    groupedEmployees[normalizedTitle].employees.push(employee);
+  });
 
-    // Create day availability indicators
-    const days = ["M", "T", "W", "T", "F", "S", "S"];
-    const dayKeys = [
-      "monday",
-      "tuesday",
-      "wednesday",
-      "thursday",
-      "friday",
-      "saturday",
-      "sunday",
-    ];
+  // Render each group
+  Object.keys(groupedEmployees)
+    .sort()
+    .forEach((normalizedTitle) => {
+      const group = groupedEmployees[normalizedTitle];
+      const jobTitle = group.displayTitle;
+      
+      // Add job title header if there are multiple job titles
+      if (Object.keys(groupedEmployees).length > 1) {
+        const titleHeader = document.createElement("div");
+        titleHeader.className = "job-title-header";
+        titleHeader.textContent = jobTitle;
+        employeeList.appendChild(titleHeader);
+      }
 
-    // Generate day indicators with appropriate colors based on availability
-    const dayIndicators = days
-      .map((day, index) => {
-        const isAvailable = employee.schedule[dayKeys[index]].available;
-        const colorClass = isAvailable ? "available" : "unavailable";
-        return `<span class="day-indicator ${colorClass}">${day}</span>`;
-      })
-      .join("");
+      // Render employees in this group
+      group.employees.forEach((employee) => {
+        const card = document.createElement("div");
+        card.className = "employee-card";
 
-    // Set card content with employee info and day indicators
-    card.innerHTML = `
+        // Create day availability indicators
+        const days = ["M", "T", "W", "T", "F", "S", "S"];
+        const dayKeys = [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+          "sunday",
+        ];
+
+        // Generate day indicators with appropriate colors based on availability
+        const dayIndicators = days
+          .map((day, index) => {
+            const isAvailable = employee.schedule[dayKeys[index]].available;
+            const colorClass = isAvailable ? "available" : "unavailable";
+            return `<span class="day-indicator ${colorClass}">${day}</span>`;
+          })
+          .join("");
+
+        // Set card content with employee info and day indicators
+        card.innerHTML = `
             <div class="card-header">
                 <div class="employee-info">
                     <h3>${employee.firstName} ${employee.lastName}</h3>
@@ -195,20 +247,23 @@ function renderEmployeeList() {
             </div>
             <button class="update-btn" data-employee-id="${employee.id}">Update</button>
         `;
-    // Append card to employee list
-    employeeList.appendChild(card);
+        // Append card to employee list
+        employeeList.appendChild(card);
 
-    // Add click event to update button
-    const updateBtn = card.querySelector(".update-btn");
-    updateBtn.addEventListener("click", () => {
-      populateFormForEdit(employee);
+        // Add click event to update button
+        const updateBtn = card.querySelector(".update-btn");
+        updateBtn.addEventListener("click", () => {
+          populateFormForEdit(employee);
+        });
+      });
     });
-  });
 }
 
 // Load employee list on page load
 document.addEventListener("DOMContentLoaded", () => {
   renderEmployeeList();
+  // Auto-generate schedule for testing purposes
+  generateSchedule();
 });
 
 // ============================================
@@ -273,34 +328,66 @@ function generateSchedule() {
 
   tableHTML += "</tr></thead><tbody>";
 
-  // Add rows for each employee
+  // Group employees by job title
+  const groupedEmployees = {};
   employees.forEach((employee) => {
-    tableHTML += `<tr><td class="employee-name">${employee.firstName} ${employee.lastName}</td>`;
-
-    // Add cells for each date
-    dates.forEach((date) => {
-      const dayOfWeek = date
-        .toLocaleDateString("en-US", { weekday: "long" })
-        .toLowerCase();
-      const daySchedule = employee.schedule[dayOfWeek];
-
-      if (
-        daySchedule &&
-        daySchedule.available &&
-        daySchedule.start &&
-        daySchedule.end
-      ) {
-        // Format time as abbreviated (e.g., "7-3pm" for 7:00-15:00)
-        const startTime = formatTimeSimple(daySchedule.start);
-        const endTime = formatTime(daySchedule.end);
-        tableHTML += `<td class="shift-cell">${startTime}-${endTime}</td>`;
-      } else {
-        tableHTML += `<td class="shift-cell">-</td>`;
-      }
-    });
-
-    tableHTML += "</tr>";
+    // Normalize job title to avoid duplicates from different spacing/casing
+    const normalizedTitle = employee.jobTitle.trim().toLowerCase();
+    if (!groupedEmployees[normalizedTitle]) {
+      groupedEmployees[normalizedTitle] = {
+        displayTitle: employee.jobTitle.trim(),
+        employees: []
+      };
+    }
+    groupedEmployees[normalizedTitle].employees.push(employee);
   });
+
+  // Debug: Log grouped job titles
+  console.log('Job titles found:', Object.keys(groupedEmployees).map(k => groupedEmployees[k].displayTitle));
+  console.log('Number of job title groups:', Object.keys(groupedEmployees).length);
+
+  // Add rows for each group
+  Object.keys(groupedEmployees)
+    .sort()
+    .forEach((normalizedTitle) => {
+      const group = groupedEmployees[normalizedTitle];
+      const jobTitle = group.displayTitle;
+      
+      // Add job title separator row if there are multiple job titles
+      if (Object.keys(groupedEmployees).length > 1) {
+        const colSpan = dates.length + 1;
+        tableHTML += `<tr class="job-title-row"><td colspan="${colSpan}" class="job-title-cell">${jobTitle}</td></tr>`;
+      }
+
+      // Add rows for employees in this group
+      group.employees.forEach((employee) => {
+        tableHTML += `<tr><td class="employee-name">${employee.firstName} ${employee.lastName}</td>`;
+
+        // Add cells for each date
+        dates.forEach((date) => {
+          const dayOfWeek = date
+            .toLocaleDateString("en-US", { weekday: "long" })
+            .toLowerCase();
+          const daySchedule = employee.schedule[dayOfWeek];
+
+          if (
+            daySchedule &&
+            daySchedule.available &&
+            daySchedule.start &&
+            daySchedule.end
+          ) {
+            // Format time as abbreviated (e.g., "7-3pm" for 7:00-15:00)
+            const startTime = formatTimeSimple(daySchedule.start);
+            const endTime = formatTime(daySchedule.end);
+            tableHTML += `<td class="shift-cell">${startTime}-${endTime}</td>`;
+          } else {
+            tableHTML += `<td class="shift-cell">-</td>`;
+          }
+        });
+
+        tableHTML += "</tr>";
+      });
+    });
 
   tableHTML += "</tbody></table>";
   tableWrapper.innerHTML = tableHTML;
