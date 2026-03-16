@@ -290,8 +290,8 @@ function generateSchedule() {
         daySchedule.start &&
         daySchedule.end
       ) {
-        // Format time as abbreviated (e.g., "7-3" for 7:00-15:00)
-        const startTime = formatTime(daySchedule.start);
+        // Format time as abbreviated (e.g., "7-3pm" for 7:00-15:00)
+        const startTime = formatTimeSimple(daySchedule.start);
         const endTime = formatTime(daySchedule.end);
         tableHTML += `<td class="shift-cell">${startTime}-${endTime}</td>`;
       } else {
@@ -306,7 +306,23 @@ function generateSchedule() {
   tableWrapper.innerHTML = tableHTML;
 }
 
-// Helper function to format time (convert 14:00 to 2, 09:00 to 9, etc.)
+// Helper function to format time without am/pm (just the hour number)
+function formatTimeSimple(time) {
+  if (!time) return "";
+  const [hours, minutes] = time.split(":");
+  let hour = parseInt(hours);
+
+  // Convert to 12-hour format
+  if (hour === 0) {
+    hour = 12; // Midnight
+  } else if (hour > 12) {
+    hour = hour - 12;
+  }
+
+  return hour.toString();
+}
+
+// Helper function to format time (convert 14:00 to 2pm, 09:00 to 9am, etc.)
 function formatTime(time) {
   if (!time) return "";
   // Split time into hours and minutes
@@ -314,9 +330,18 @@ function formatTime(time) {
   // Convert hours to integer
   let hour = parseInt(hours);
 
-  // Convert to 12-hour format or keep as 24-hour, abbreviated
-  // For simplicity, just return the hour
-  return hour.toString();
+  // Determine AM or PM
+  // For hours 0-11 it's AM, for hours 12-23 it's PM
+  const period = hour >= 12 ? "pm" : "am";
+
+  // Convert to 12-hour format
+  if (hour === 0) {
+    hour = 12; // Midnight
+  } else if (hour > 12) {
+    hour = hour - 12; // Convert to 12-hour format
+  }
+  // Return formatted time (e.g., "2pm", "9am")
+  return hour.toString() + period;
 }
 
 // ============================================
@@ -358,21 +383,101 @@ testDataForm.addEventListener("submit", (e) => {
 
   // Arrays of random first and last names for randomizer
   const firstNames = [
-    "Emma", "Liam", "Olivia", "Noah", "Ava", "Ethan", "Sophia", "Mason",
-    "Isabella", "William", "Mia", "James", "Charlotte", "Benjamin", "Amelia",
-    "Lucas", "Harper", "Henry", "Evelyn", "Alexander", "Abigail", "Michael",
-    "Emily", "Daniel", "Elizabeth", "Matthew", "Sofia", "Jackson", "Avery",
-    "Sebastian", "Ella", "Jack", "Scarlett", "Aiden", "Grace", "Owen", "Chloe",
-    "Samuel", "Victoria", "Joseph", "Riley", "John", "Aria", "David", "Lily"
+    "Emma",
+    "Liam",
+    "Olivia",
+    "Noah",
+    "Ava",
+    "Ethan",
+    "Sophia",
+    "Mason",
+    "Isabella",
+    "William",
+    "Mia",
+    "James",
+    "Charlotte",
+    "Benjamin",
+    "Amelia",
+    "Lucas",
+    "Harper",
+    "Henry",
+    "Evelyn",
+    "Alexander",
+    "Abigail",
+    "Michael",
+    "Emily",
+    "Daniel",
+    "Elizabeth",
+    "Matthew",
+    "Sofia",
+    "Jackson",
+    "Avery",
+    "Sebastian",
+    "Ella",
+    "Jack",
+    "Scarlett",
+    "Aiden",
+    "Grace",
+    "Owen",
+    "Chloe",
+    "Samuel",
+    "Victoria",
+    "Joseph",
+    "Riley",
+    "John",
+    "Aria",
+    "David",
+    "Lily",
   ];
 
   const lastNames = [
-    "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis",
-    "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson",
-    "Thomas", "Taylor", "Moore", "Jackson", "Martin", "Lee", "Perez", "Thompson",
-    "White", "Harris", "Sanchez", "Clark", "Ramirez", "Lewis", "Robinson", "Walker",
-    "Young", "Allen", "King", "Wright", "Scott", "Torres", "Nguyen", "Hill", "Flores",
-    "Green", "Adams", "Nelson", "Baker", "Hall", "Rivera", "Campbell"
+    "Smith",
+    "Johnson",
+    "Williams",
+    "Brown",
+    "Jones",
+    "Garcia",
+    "Miller",
+    "Davis",
+    "Rodriguez",
+    "Martinez",
+    "Hernandez",
+    "Lopez",
+    "Gonzalez",
+    "Wilson",
+    "Anderson",
+    "Thomas",
+    "Taylor",
+    "Moore",
+    "Jackson",
+    "Martin",
+    "Lee",
+    "Perez",
+    "Thompson",
+    "White",
+    "Harris",
+    "Sanchez",
+    "Clark",
+    "Ramirez",
+    "Lewis",
+    "Robinson",
+    "Walker",
+    "Young",
+    "Allen",
+    "King",
+    "Wright",
+    "Scott",
+    "Torres",
+    "Nguyen",
+    "Hill",
+    "Flores",
+    "Green",
+    "Adams",
+    "Nelson",
+    "Baker",
+    "Hall",
+    "Rivera",
+    "Campbell",
   ];
 
   // Generate employees
@@ -390,41 +495,41 @@ testDataForm.addEventListener("submit", (e) => {
       lastName: lastName,
       schedule: {
         monday: {
-          available: workDays.includes('monday'),
-          start: workDays.includes('monday') ? shiftStart : '',
-          end: workDays.includes('monday') ? shiftEnd : ''
+          available: workDays.includes("monday"),
+          start: workDays.includes("monday") ? shiftStart : "",
+          end: workDays.includes("monday") ? shiftEnd : "",
         },
         tuesday: {
-          available: workDays.includes('tuesday'),
-          start: workDays.includes('tuesday') ? shiftStart : '',
-          end: workDays.includes('tuesday') ? shiftEnd : ''
+          available: workDays.includes("tuesday"),
+          start: workDays.includes("tuesday") ? shiftStart : "",
+          end: workDays.includes("tuesday") ? shiftEnd : "",
         },
         wednesday: {
-          available: workDays.includes('wednesday'),
-          start: workDays.includes('wednesday') ? shiftStart : '',
-          end: workDays.includes('wednesday') ? shiftEnd : ''
+          available: workDays.includes("wednesday"),
+          start: workDays.includes("wednesday") ? shiftStart : "",
+          end: workDays.includes("wednesday") ? shiftEnd : "",
         },
         thursday: {
-          available: workDays.includes('thursday'),
-          start: workDays.includes('thursday') ? shiftStart : '',
-          end: workDays.includes('thursday') ? shiftEnd : ''
+          available: workDays.includes("thursday"),
+          start: workDays.includes("thursday") ? shiftStart : "",
+          end: workDays.includes("thursday") ? shiftEnd : "",
         },
         friday: {
-          available: workDays.includes('friday'),
-          start: workDays.includes('friday') ? shiftStart : '',
-          end: workDays.includes('friday') ? shiftEnd : ''
+          available: workDays.includes("friday"),
+          start: workDays.includes("friday") ? shiftStart : "",
+          end: workDays.includes("friday") ? shiftEnd : "",
         },
         saturday: {
-          available: workDays.includes('saturday'),
-          start: workDays.includes('saturday') ? shiftStart : '',
-          end: workDays.includes('saturday') ? shiftEnd : ''
+          available: workDays.includes("saturday"),
+          start: workDays.includes("saturday") ? shiftStart : "",
+          end: workDays.includes("saturday") ? shiftEnd : "",
         },
         sunday: {
-          available: workDays.includes('sunday'),
-          start: workDays.includes('sunday') ? shiftStart : '',
-          end: workDays.includes('sunday') ? shiftEnd : ''
-        }
-      }
+          available: workDays.includes("sunday"),
+          start: workDays.includes("sunday") ? shiftStart : "",
+          end: workDays.includes("sunday") ? shiftEnd : "",
+        },
+      },
     };
 
     saveEmployee(employee);
@@ -443,16 +548,24 @@ testDataForm.addEventListener("submit", (e) => {
 // Helper function to generate random work days
 // 3-6 days per week, with 5 being most common
 function generateRandomWorkDays() {
-  const allDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-  
+  const allDays = [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday",
+  ];
+
   // Weighted random number of days (5 is most common)
   const numDaysRandom = Math.random();
   let numDays;
   if (numDaysRandom < 0.15) {
     numDays = 3; // 15% chance
-  } else if (numDaysRandom < 0.30) {
+  } else if (numDaysRandom < 0.3) {
     numDays = 4; // 15% chance
-  } else if (numDaysRandom < 0.80) {
+  } else if (numDaysRandom < 0.8) {
     numDays = 5; // 50% chance (most common)
   } else {
     numDays = 6; // 20% chance (rare)
