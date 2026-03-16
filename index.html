@@ -9,10 +9,20 @@
   <body>
     <!-- Header - Employee Schedule Generator -->
     <h1>Employee Schedule Generator</h1>
-    <!-- Form - handling employee input -->
-    <div>
-      <button id="add-employee-btn">Add Employee</button>
-    </div>
+    
+    <div class="main-container">
+      <!-- Employee List Sidebar -->
+      <aside id="employee-list-sidebar">
+        <h2>Employee List</h2>
+        <div id="employee-list"></div>
+      </aside>
+      
+      <!-- Main Content Area -->
+      <main class="content-area">
+        <!-- Form - handling employee input -->
+        <div>
+          <button id="add-employee-btn">Add Employee</button>
+        </div>
     <!-- TODO: make form pop up dynamically -->
     <!-- Employee Form -->
     <form id="employee-form">
@@ -82,11 +92,9 @@
         <button type="submit" id="submit-employee-btn">Submit Employee</button>
       </div>
     </form>
+      </main>
+    </div>
 
-    <!-- Employee List  -->
-
-
-    <!-- TODO: form to add new employees -->
     <!-- TODO: dynamically rendered table - generated schedule -->
 
     <script src="script.js"></script>
