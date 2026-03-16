@@ -10,6 +10,32 @@ h1 {
   margin-top: 20px;
 }
 
+/* Button Container */
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 20px auto;
+}
+
+/* Button Centering */
+.button-container button {
+  padding: 12px 24px;
+  background-color: #5e4caf;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Hover effect for buttons */
+.button-container button:hover {
+  background-color: #7c7bda;
+}
+
 /* Main Layout Container */
 .main-container {
   display: flex;
@@ -31,6 +57,7 @@ h1 {
   overflow-y: auto;
 }
 
+/* Employee List Sidebar Header */
 #employee-list-sidebar h2 {
   font-size: 18px;
   color: #5e4caf;
@@ -44,6 +71,7 @@ h1 {
   gap: 10px;
 }
 
+/* Employee Card */
 .employee-card {
   background-color: white;
   padding: 15px;
@@ -59,12 +87,14 @@ h1 {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
+/* Card Header */
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
 }
 
+/* Employee Info */
 .employee-info h3 {
   margin: 0 0 5px 0;
   color: #333;
@@ -77,6 +107,7 @@ h1 {
   font-size: 14px;
 }
 
+/* Day Indicators */
 .day-indicators {
   display: flex;
   gap: 4px;
@@ -97,13 +128,30 @@ h1 {
   color: #dc143c;
 }
 
-/* Content Area */
+/* Update Button Inside Form */
+.update-btn {
+  margin-top: 10px;
+  padding: 6px 12px;
+  background-color: #5e4caf;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.3s;
+  width: 100%;
+}
+
+.update-btn:hover {
+  background-color: #7c7bda;
+}
+
+/* Content Area for Employee Form */
 .content-area {
   flex: 1;
 }
 
 /* New Employee Form  */
-
 #employee-form {
   max-width: 600px;
   margin: 30px auto;
@@ -169,6 +217,8 @@ h1 {
   font-size: 14px;
   flex: 1;
 }
+
+/* Submit Employee Button */
 #submit-employee-btn {
   display: block;
   margin: 20px auto;
@@ -182,22 +232,5 @@ h1 {
 }
 
 #submit-employee-btn:hover {
-  background-color: #7c7bda;
-}
-/* End of Employees Form  */
-
-#add-employee-btn {
-  display: block;
-  margin: 20px auto;
-  padding: 10px 20px;
-  background-color: #5e4caf;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-#add-employee-btn:hover {
   background-color: #7c7bda;
 }

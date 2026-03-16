@@ -1,11 +1,16 @@
 // handle button click actions
 
+// Track current editing employee ID (null if adding new)
+let currentEditingEmployeeId = null;
+
 // handle showing/hiding add employee form
 const addEmployeeBtn = document.getElementById("add-employee-btn");
 const employeeForm = document.getElementById("employee-form");
 
 // toggle employee form visibility
 addEmployeeBtn.addEventListener("click", () => {
+  currentEditingEmployeeId = null; // Reset to add mode
+  employeeForm.reset(); // Clear form
   if (
     employeeForm.style.display === "none" ||
     employeeForm.style.display === ""
@@ -22,7 +27,7 @@ employeeForm.addEventListener("submit", (e) => {
 
   // Get form data
   const employee = {
-    id: Date.now(), // unique ID based on timestamp
+    id: currentEditingEmployeeId || Date.now(), // Use existing ID if editing, otherwise create new
     jobTitle: document.getElementById("job-title").value,
     firstName: document.getElementById("first-name").value,
     lastName: document.getElementById("last-name").value,
@@ -65,8 +70,12 @@ employeeForm.addEventListener("submit", (e) => {
     },
   };
 
-  // Save to local storage
-  saveEmployee(employee);
+  // Save to local storage (will either add or update)
+  if (currentEditingEmployeeId) {
+    updateEmployee(employee);
+  } else {
+    saveEmployee(employee);
+  }
 
   // Render employee list
   renderEmployeeList();
@@ -74,6 +83,7 @@ employeeForm.addEventListener("submit", (e) => {
   // Reset form and hide it
   employeeForm.reset();
   employeeForm.style.display = "none";
+  currentEditingEmployeeId = null;
 });
 
 // Local storage functions
@@ -83,10 +93,53 @@ function saveEmployee(employee) {
   localStorage.setItem("employees", JSON.stringify(employees));
 }
 
+// Update existing employee in local storage
+function updateEmployee(updatedEmployee) {
+  let employees = getEmployees();
+  // Find index of employee to update
+  const index = employees.findIndex((emp) => emp.id === updatedEmployee.id);
+  if (index !== -1) {
+    // Update employee data
+    employees[index] = updatedEmployee;
+    // Save updated list back to local storage
+    localStorage.setItem("employees", JSON.stringify(employees));
+  }
+}
+
 // Get employees from local storage
 function getEmployees() {
   const employees = localStorage.getItem("employees");
   return employees ? JSON.parse(employees) : [];
+}
+
+// Function to populate form with employee data
+function populateFormForEdit(employee) {
+  currentEditingEmployeeId = employee.id;
+
+  // Populate basic info
+  document.getElementById("job-title").value = employee.jobTitle;
+  document.getElementById("first-name").value = employee.firstName;
+  document.getElementById("last-name").value = employee.lastName;
+
+  // Populate schedule
+  const days = [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday",
+  ];
+  days.forEach((day) => {
+    document.getElementById(day).checked = employee.schedule[day].available;
+    document.getElementById(`${day}-start`).value =
+      employee.schedule[day].start;
+    document.getElementById(`${day}-end`).value = employee.schedule[day].end;
+  });
+
+  // Show the form
+  employeeForm.style.display = "block";
 }
 
 // Render employee list
@@ -134,9 +187,16 @@ function renderEmployeeList() {
                     ${dayIndicators}
                 </div>
             </div>
-        `; 
-        // Append card to employee list
+            <button class="update-btn" data-employee-id="${employee.id}">Update</button>
+        `;
+    // Append card to employee list
     employeeList.appendChild(card);
+
+    // Add click event to update button
+    const updateBtn = card.querySelector(".update-btn");
+    updateBtn.addEventListener("click", () => {
+      populateFormForEdit(employee);
+    });
   });
 }
 
