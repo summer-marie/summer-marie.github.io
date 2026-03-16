@@ -7,10 +7,82 @@
     <title>Document</title>
   </head>
   <body>
-    <!-- TODO: button to add new employees -->
-     <!-- TODO: form to add new employees -->
-      <!-- TODO: dynamically rendered table - generated schedule -->
+    <!-- Header - Employee Schedule Generator -->
+    <h1>Employee Schedule Generator</h1>
+    <!-- Form - handling employee input -->
+    <div>
+      <button id="add-employee-btn">Add Employee(s)</button>
+    </div>
+    <form id="employee-form">
+      <div class="name-inputs">
+        <label for="job-title">Job Title:</label>
+        <input type="text" id="job-title" name="jobTitle" required />
 
+        <label for="first-name">First Name:</label>
+        <input type="text" id="first-name" name="firstName" required />
+
+        <label for="last-name">Last Name:</label>
+        <input type="text" id="last-name" name="lastName" required />
+      </div>
+
+      <div class="schedule-section">
+        <h3>Availability</h3>
+
+        <div class="day-row">
+          <input type="checkbox" id="monday" name="monday" />
+          <label for="monday">Monday</label>
+          <input type="time" id="monday-start" name="mondayStart" />
+          <input type="time" id="monday-end" name="mondayEnd" />
+        </div>
+
+        <div class="day-row">
+          <input type="checkbox" id="tuesday" name="tuesday" />
+          <label for="tuesday">Tuesday</label>
+          <input type="time" id="tuesday-start" name="tuesdayStart" />
+          <input type="time" id="tuesday-end" name="tuesdayEnd" />
+        </div>
+
+        <div class="day-row">
+          <input type="checkbox" id="wednesday" name="wednesday" />
+          <label for="wednesday">Wednesday</label>
+          <input type="time" id="wednesday-start" name="wednesdayStart" />
+          <input type="time" id="wednesday-end" name="wednesdayEnd" />
+        </div>
+
+        <div class="day-row">
+          <input type="checkbox" id="thursday" name="thursday" />
+          <label for="thursday">Thursday</label>
+          <input type="time" id="thursday-start" name="thursdayStart" />
+          <input type="time" id="thursday-end" name="thursdayEnd" />
+        </div>
+
+        <div class="day-row">
+          <input type="checkbox" id="friday" name="friday" />
+          <label for="friday">Friday</label>
+          <input type="time" id="friday-start" name="fridayStart" />
+          <input type="time" id="friday-end" name="fridayEnd" />
+        </div>
+
+        <div class="day-row">
+          <input type="checkbox" id="saturday" name="saturday" />
+          <label for="saturday">Saturday</label>
+          <input type="time" id="saturday-start" name="saturdayStart" />
+          <input type="time" id="saturday-end" name="saturdayEnd" />
+        </div>
+
+        <div class="day-row">
+          <input type="checkbox" id="sunday" name="sunday" />
+          <label for="sunday">Sunday</label>
+          <input type="time" id="sunday-start" name="sundayStart" />
+          <input type="time" id="sunday-end" name="sundayEnd" />
+        </div>
+      </div>
+    </form>
+
+    <!-- TODO: button to add new employees -->
+
+    <!-- TODO: form to add new employees -->
+    <!-- TODO: dynamically rendered table - generated schedule -->
 
     <script src="script.js"></script>
   </body>
