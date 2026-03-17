@@ -660,3 +660,235 @@ function generateRandomWorkDays() {
   const shuffled = [...allDays].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, numDays);
 }
+
+// ============================================
+// RULES MANAGEMENT SYSTEM
+// ============================================
+
+const manageRulesBtn = document.getElementById("manage-rules-link");
+const rulesModalOverlay = document.getElementById("rules-modal-overlay");
+const closeRulesModalBtn = document.getElementById("close-rules-modal-btn");
+const addRuleBtn = document.getElementById("add-rule-btn");
+const ruleFormContainer = document.getElementById("rule-form-container");
+const ruleForm = document.getElementById("rule-form");
+const cancelRuleFormBtn = document.getElementById("cancel-rule-form-btn");
+const rulesList = document.getElementById("rules-list");
+const rulesCountBadge = document.getElementById("rules-count");
+
+let currentEditingRuleId = null;
+
+// Show rules modal
+manageRulesBtn.addEventListener("click", () => {
+  rulesModalOverlay.style.display = "flex";
+  renderRulesList();
+  updateRulesCount();
+});
+
+// Close rules modal
+closeRulesModalBtn.addEventListener("click", () => {
+  rulesModalOverlay.style.display = "none";
+  hideRuleForm();
+});
+
+// Close overlay when clicking outside
+rulesModalOverlay.addEventListener("click", (e) => {
+  if (e.target === rulesModalOverlay) {
+    rulesModalOverlay.style.display = "none";
+    hideRuleForm();
+  }
+});
+
+// Show add rule form
+addRuleBtn.addEventListener("click", () => {
+  showRuleForm();
+});
+
+// Cancel rule form
+cancelRuleFormBtn.addEventListener("click", () => {
+  hideRuleForm();
+});
+
+// Save rule (create or update)
+ruleForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const ruleId = document.getElementById("rule-id").value;
+  const ruleName = document.getElementById("rule-name").value.trim();
+  const jobTitle = document.getElementById("rule-job-title").value;
+  const conditionType = document.getElementById("rule-condition").value;
+  const threshold = parseInt(document.getElementById("rule-threshold").value);
+  const alertLevel = document.getElementById("rule-alert-level").value;
+
+  const rule = {
+    id: ruleId || `rule_${Date.now()}`,
+    name: ruleName,
+    jobTitle: jobTitle,
+    conditionType: conditionType,
+    threshold: threshold,
+    alertLevel: alertLevel,
+    active: true,
+    createdAt: ruleId ? getRuleById(ruleId).createdAt : new Date().toISOString()
+  };
+
+  if (ruleId) {
+    updateRule(rule);
+  } else {
+    saveRule(rule);
+  }
+
+  hideRuleForm();
+  renderRulesList();
+  updateRulesCount();
+});
+
+// Get all rules from localStorage
+function getRules() {
+  const rules = localStorage.getItem("scheduleRules");
+  return rules ? JSON.parse(rules) : [];
+}
+
+// Save a new rule
+function saveRule(rule) {
+  const rules = getRules();
+  rules.push(rule);
+  localStorage.setItem("scheduleRules", JSON.stringify(rules));
+}
+
+// Update an existing rule
+function updateRule(updatedRule) {
+  const rules = getRules();
+  const index = rules.findIndex((r) => r.id === updatedRule.id);
+  if (index !== -1) {
+    rules[index] = updatedRule;
+    localStorage.setItem("scheduleRules", JSON.stringify(rules));
+  }
+}
+
+// Delete a rule
+function deleteRule(ruleId) {
+  const rules = getRules();
+  const filtered = rules.filter((r) => r.id !== ruleId);
+  localStorage.setItem("scheduleRules", JSON.stringify(filtered));
+  renderRulesList();
+  updateRulesCount();
+}
+
+// Get rule by ID
+function getRuleById(ruleId) {
+  const rules = getRules();
+  return rules.find((r) => r.id === ruleId);
+}
+
+// Show rule form for creating or editing
+function showRuleForm(rule = null) {
+  ruleFormContainer.style.display = "block";
+  
+  // Populate job title dropdown with unique job titles from employees
+  const employees = getEmployees();
+  const jobTitles = [...new Set(employees.map(e => e.jobTitle.trim()))].sort();
+  
+  const jobTitleSelect = document.getElementById("rule-job-title");
+  jobTitleSelect.innerHTML = '<option value="">Select a job title...</option>';
+  jobTitles.forEach(title => {
+    const option = document.createElement("option");
+    option.value = title;
+    option.textContent = title;
+    jobTitleSelect.appendChild(option);
+  });
+
+  if (rule) {
+    // Edit mode
+    document.getElementById("rule-form-title").textContent = "Edit Rule";
+    document.getElementById("rule-id").value = rule.id;
+    document.getElementById("rule-name").value = rule.name;
+    document.getElementById("rule-job-title").value = rule.jobTitle;
+    document.getElementById("rule-condition").value = rule.conditionType;
+    document.getElementById("rule-threshold").value = rule.threshold;
+    document.getElementById("rule-alert-level").value = rule.alertLevel;
+    currentEditingRuleId = rule.id;
+  } else {
+    // Create mode
+    document.getElementById("rule-form-title").textContent = "Create New Rule";
+    ruleForm.reset();
+    document.getElementById("rule-id").value = "";
+    currentEditingRuleId = null;
+  }
+
+  // Scroll to form
+  ruleFormContainer.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+// Hide rule form
+function hideRuleForm() {
+  ruleFormContainer.style.display = "none";
+  ruleForm.reset();
+  currentEditingRuleId = null;
+}
+
+// Render rules list
+function renderRulesList() {
+  const rules = getRules();
+  
+  if (rules.length === 0) {
+    rulesList.innerHTML = `
+      <div class="empty-rules-message">
+        <p>No rules created yet. Click "Add New Rule" to create your first validation rule.</p>
+      </div>
+    `;
+    return;
+  }
+
+  rulesList.innerHTML = "";
+  rules.forEach((rule) => {
+    const ruleItem = document.createElement("div");
+    ruleItem.className = `rule-item alert-${rule.alertLevel}`;
+    
+    const conditionText = rule.conditionType === "minCountPerDay" 
+      ? `Minimum ${rule.threshold} per day` 
+      : rule.conditionType;
+    
+    ruleItem.innerHTML = `
+      <div class="rule-header">
+        <h4 class="rule-name">${rule.name}</h4>
+        <div class="rule-actions">
+          <button class="edit-rule-btn" data-rule-id="${rule.id}">Edit</button>
+          <button class="delete-rule-btn" data-rule-id="${rule.id}">Delete</button>
+        </div>
+      </div>
+      <div class="rule-details">
+        <strong>Job Title:</strong> ${rule.jobTitle}<br>
+        <strong>Condition:</strong> ${conditionText}<br>
+        <strong>Alert Level:</strong> <span class="alert-badge ${rule.alertLevel}">${rule.alertLevel}</span>
+      </div>
+    `;
+    
+    rulesList.appendChild(ruleItem);
+
+    // Add event listeners to edit and delete buttons
+    ruleItem.querySelector(".edit-rule-btn").addEventListener("click", () => {
+      showRuleForm(rule);
+    });
+
+    ruleItem.querySelector(".delete-rule-btn").addEventListener("click", () => {
+      if (confirm(`Are you sure you want to delete the rule "${rule.name}"?`)) {
+        deleteRule(rule.id);
+      }
+    });
+  });
+}
+
+// Update rules count badge in navbar
+function updateRulesCount() {
+  const rules = getRules();
+  if (rules.length > 0) {
+    rulesCountBadge.textContent = rules.length;
+    rulesCountBadge.style.display = "inline-block";
+  } else {
+    rulesCountBadge.style.display = "none";
+  }
+}
+
+// Initialize rules count on page load
+document.addEventListener("DOMContentLoaded", () => {
+  updateRulesCount();
+});

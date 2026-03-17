@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
-    <title>Document</title>
+    <title>Universal Schedule Creator</title>
   </head>
   <body>
     <!-- Header - Employee Schedule Generator -->
@@ -16,6 +16,7 @@
       <nav class="actions-nav">
         <button id="add-employee-link">Add Employee</button>
         <button id="generate-schedule-link">Generate Schedule</button>
+        <button id="manage-rules-link">Manage Rules <span id="rules-count" class="badge"></span></button>
         <button id="test-data-link">Generate Test Data</button>
       </nav>
     </div>
@@ -130,6 +131,83 @@
           </div>
         </div>
       </main>
+    </div>
+
+    <!-- Rules Management Modal -->
+    <div id="rules-modal-overlay" class="form-overlay" style="display: none">
+      <div class="rules-modal-container">
+        <h2>Manage Schedule Rules</h2>
+        <p class="rules-description">Create custom validation rules for your schedules. Rules check staffing requirements and highlight violations.</p>
+        
+        <!-- Rules List -->
+        <div id="rules-list" class="rules-list">
+          <!-- Rules will be dynamically inserted here -->
+        </div>
+
+        <!-- Add/Edit Rule Form -->
+        <div id="rule-form-container" style="display: none;">
+          <h3 id="rule-form-title">Create New Rule</h3>
+          <form id="rule-form">
+            <input type="hidden" id="rule-id" name="ruleId" />
+            
+            <div class="rule-form-group">
+              <label for="rule-name">Rule Name:</label>
+              <input
+                type="text"
+                id="rule-name"
+                name="ruleName"
+                placeholder="e.g., Minimum Housekeepers"
+                required
+              />
+            </div>
+
+            <div class="rule-form-group">
+              <label for="rule-job-title">Job Title:</label>
+              <select id="rule-job-title" name="ruleJobTitle" required>
+                <option value="">Select a job title...</option>
+              </select>
+            </div>
+
+            <div class="rule-form-group">
+              <label for="rule-condition">Condition Type:</label>
+              <select id="rule-condition" name="ruleCondition" required>
+                <option value="minCountPerDay">Minimum count per day</option>
+              </select>
+            </div>
+
+            <div class="rule-form-group">
+              <label for="rule-threshold">Threshold:</label>
+              <input
+                type="number"
+                id="rule-threshold"
+                name="ruleThreshold"
+                min="1"
+                max="100"
+                placeholder="e.g., 4"
+                required
+              />
+            </div>
+
+            <div class="rule-form-group">
+              <label for="rule-alert-level">Alert Level:</label>
+              <select id="rule-alert-level" name="ruleAlertLevel" required>
+                <option value="warning">⚠️ Warning (Yellow)</option>
+                <option value="error">🚫 Error (Red)</option>
+              </select>
+            </div>
+
+            <div class="rule-form-buttons">
+              <button type="submit" id="save-rule-btn">Save Rule</button>
+              <button type="button" id="cancel-rule-form-btn">Cancel</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="rules-modal-buttons">
+          <button id="add-rule-btn" class="primary-btn">+ Add New Rule</button>
+          <button id="close-rules-modal-btn" class="secondary-btn">Close</button>
+        </div>
+      </div>
     </div>
 
     <!-- Test Data Generation Form -->
