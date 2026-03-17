@@ -10,15 +10,12 @@
     <!-- Header - Employee Schedule Generator -->
     <h1>Employee Schedule Generator</h1>
 
-    <!-- Test Data Button - Top Left -->
-    <button id="test-data-btn" class="test-data-button">
-      Generate Test Data
-    </button>
-
     <!-- Action Buttons -->
-    <div class="button-container">
+    <div class="actions-container">
+      <h2 class="actions-title">Actions</h2>
       <button id="add-employee-btn">Add Employee</button>
       <button id="generate-schedule-btn">Generate Schedule</button>
+      <button id="test-data-btn">Generate Test Data</button>
     </div>
 
     <div class="main-container">
@@ -106,7 +103,7 @@
         </form>
 
         <!-- Schedule Display -->
-        <div id="schedule-container">
+        <div id="schedule-container" style="display: none;">
           <div class="schedule-header">
             <h2>Current Schedule</h2>
             <div class="schedule-controls">

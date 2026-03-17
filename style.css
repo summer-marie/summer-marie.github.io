@@ -1,8 +1,6 @@
-/* create visually appealing employees list, rounded edges, shadows, and hover effects */
-/* pick color scheme to make the interface consistent */
-/* create rounded buttons */
-
-/* style the employee cards with a light background, padding, and margin */
+/* ============================================
+   GENERAL STYLES
+   ============================================ */
 
 h1 {
   text-align: center;
@@ -11,50 +9,46 @@ h1 {
   position: relative;
 }
 
-/* Test Data Button - Top Left */
-.test-data-button {
-  position: absolute;
-  top: 80px;
-  left: 80px;
-  padding: 16px 31px;
-  background-color: #f0842c;
+/* ============================================
+   NAVIGATION BAR (ACTIONS)
+   ============================================ */
+
+/* Actions Container - Full-width navigation bar */
+.actions-container {
+  width: 100%;
+  background-color: #2c3e50;
+  padding: 15px 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.actions-title {
   color: white;
+  margin: 0;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  margin-right: 30px;
+}
+
+.actions-container button {
+  padding: 10px 20px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
-  font-size: 21px;
+  font-size: 14px;
   font-weight: 500;
-  z-index: 100;
-}
-
-.test-data-button:hover {
-  background-color: #f5a936;
-}
-
-/* ============================================
-   BUTTON STYLES
-   ============================================ */
-
-/* Button Container - Centers buttons under h1 */
-.button-container {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin: 20px auto;
+  white-space: nowrap;
 }
 
 /* Add Employee Button */
 #add-employee-btn {
-  padding: 12px 24px;
   background-color: #5e4caf;
   color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  font-size: 16px;
-  font-weight: 500;
 }
 
 #add-employee-btn:hover {
@@ -63,15 +57,22 @@ h1 {
 
 /* Generate Schedule Button */
 #generate-schedule-btn {
-  padding: 12px 24px;
   background-color: #1e3a5f;
   color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  font-size: 16px;
-  font-weight: 500;
+}
+
+#generate-schedule-btn:hover {
+  background-color: #2d5a8f;
+}
+
+/* Generate Test Data Button */
+#test-data-btn {
+  background-color: #f0842c;
+  color: white;
+}
+
+#test-data-btn:hover {
+  background-color: #f5a936;
 }
 
 #generate-schedule-btn:hover {
@@ -79,19 +80,22 @@ h1 {
 }
 
 /* ============================================
-   END BUTTON STYLES
+   MAIN LAYOUT
    ============================================ */
 
-/* Main Layout Container */
 .main-container {
   display: flex;
   gap: 20px;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 20px;
+  padding-left: 0;
 }
 
-/* Employee List Sidebar */
+/* ============================================
+   EMPLOYEE LIST SIDEBAR
+   ============================================ */
+
 #employee-list-sidebar {
   width: 300px;
   min-width: 300px;
@@ -211,6 +215,10 @@ h1 {
   margin-top: 0;
 }
 
+/* ============================================
+   EMPLOYEE FORM
+   ============================================ */
+
 /* Content Area for Employee Form */
 .content-area {
   flex: 1;
@@ -284,7 +292,7 @@ h1 {
 }
 
 /* ============================================
-   FORM BUTTON STYLES
+   EMPLOYEE FORM BUTTONS
    ============================================ */
 
 /* Form Button Group - Container for submit and cancel buttons */
@@ -347,14 +355,9 @@ h1 {
 }
 
 /* ============================================
-   END FORM BUTTON STYLES
+   SCHEDULE DISPLAY
    ============================================ */
 
-/* ============================================
-   SCHEDULE DISPLAY STYLES
-   ============================================ */
-
-/* Schedule Container */
 #schedule-container {
   max-width: 100%;
   margin: 30px auto;
@@ -486,11 +489,7 @@ h1 {
 }
 
 /* ============================================
-   END SCHEDULE DISPLAY STYLES
-   ============================================ */
-
-/* ============================================
-   TEST DATA FORM STYLES
+   TEST DATA FORM
    ============================================ */
 
 /* Overlay for test data form */
@@ -590,6 +589,4 @@ h1 {
   background-color: #5a6268;
 }
 
-/* ============================================
-   END TEST DATA FORM STYLES
-   ============================================ */
+

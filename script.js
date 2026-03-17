@@ -262,8 +262,6 @@ function renderEmployeeList() {
 // Load employee list on page load
 document.addEventListener("DOMContentLoaded", () => {
   renderEmployeeList();
-  // Auto-generate schedule for testing purposes
-  generateSchedule();
 });
 
 // ============================================
