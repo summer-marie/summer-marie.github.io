@@ -2,7 +2,7 @@
 let currentEditingEmployeeId = null;
 
 // handle showing/hiding add employee form
-const addEmployeeBtn = document.getElementById("add-employee-btn");
+const addEmployeeBtn = document.getElementById("add-employee-link");
 const employeeForm = document.getElementById("employee-form");
 
 // toggle employee form visibility
@@ -268,7 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // SCHEDULE GENERATION
 // ============================================
 
-const generateScheduleBtn = document.getElementById("generate-schedule-btn");
+const generateScheduleBtn = document.getElementById("generate-schedule-link");
 const scheduleContainer = document.getElementById("schedule-container");
 const weeksSelect = document.getElementById("weeks-select");
 const regenerateBtn = document.getElementById("regenerate-schedule-btn");
@@ -433,7 +433,7 @@ function formatTime(time) {
 // TEST DATA GENERATION
 // ============================================
 
-const testDataBtn = document.getElementById("test-data-btn");
+const testDataBtn = document.getElementById("test-data-link");
 const testDataOverlay = document.getElementById("test-data-form-overlay");
 const testDataForm = document.getElementById("test-data-form");
 const cancelTestFormBtn = document.getElementById("cancel-test-form-btn");
