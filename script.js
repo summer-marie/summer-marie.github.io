@@ -338,6 +338,12 @@ function renderEmployeeList() {
   // Clear current list
   employeeList.innerHTML = "";
 
+  // Show message if no employees exist
+  if (employees.length === 0) {
+    employeeList.innerHTML = "<p style='text-align: center; color: #666; padding: 20px;'>No employees added yet.</p>";
+    return;
+  }
+
   // Group employees by job title
   const groupedEmployees = {};
   employees.forEach((employee) => {
