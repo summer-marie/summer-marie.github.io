@@ -4,6 +4,17 @@
    Page-level styles and typography
    ============================================ */
 
+/* Universal box-sizing and body reset to prevent overflow */
+* {
+  box-sizing: border-box; /* Include padding and border in element width */
+}
+
+body {
+  margin: 0; /* Remove default body margin that causes white space */
+  padding: 0;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
 /* Main page heading - centered and positioned for layout */
 h1 {
   text-align: center;
@@ -39,14 +50,14 @@ h1 {
   font-weight: 700;
 }
 
-/* Navigation links container - centered on Add Employee using absolute positioning */
+/* Navigation links container - centered main actions with FAQs on far right */
 .actions-nav {
   display: flex;
   align-items: center;
   gap: 40px;
-  position: absolute; /* Remove from document flow for precise centering */
-  left: 50%; /* Start at horizontal center */
-  transform: translateX(-65%); /* Offset to center on Add Employee button */
+  flex: 1; /* Take available space between title and edge */
+  justify-content: center; /* Center the nav buttons */
+  margin: 0 40px; /* Space from title and edge */
 }
 
 .actions-container button {
@@ -63,9 +74,9 @@ h1 {
   position: relative;
 }
 
-/* Generate Test Data - push to the side */
-#test-data-link {
-  margin-left: 40px;
+/* FAQs link - push to the far right side using margin-left auto */
+#faqs-link {
+  margin-left: auto; /* Push to the far right */
 }
 
 /* Animated underline on hover - starts at 0 width and expands */
@@ -1105,8 +1116,9 @@ h1 {
     gap: 30px;
   }
 
-  #test-data-link {
-    margin-left: 30px;
+  /* FAQs link maintains right positioning on tablet */
+  #faqs-link {
+    margin-left: auto;
   }
 }
 
@@ -1136,15 +1148,13 @@ h1 {
 
   .actions-nav {
     width: 100%;
-    position: static;
-    transform: none;
     gap: 20px;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
     justify-content: center;
   }
 
-  #test-data-link {
-    margin-left: 0;
+  #faqs-link {
+    margin-left: 0; /* Remove right push on tablet, let it flow with other buttons */
   }
 
   .actions-container button {
