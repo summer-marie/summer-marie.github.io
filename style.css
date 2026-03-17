@@ -2,20 +2,26 @@
 
 /* ============================================
    GENERAL STYLES
+   ============================================
+   Page-level styles and typography
    ============================================ */
 
+/* Main page heading - centered and positioned for layout */
 h1 {
   text-align: center;
   color: #333;
   margin-top: 20px;
-  position: relative;
+  position: relative; /* Allows for absolute positioning of child elements */
 }
 
 /* ============================================
    NAVIGATION BAR (ACTIONS)
+   ============================================
+   Top navigation bar with centered link-style buttons
+   Features: Animated underlines, badge counter, hover effects
    ============================================ */
 
-/* Actions Container - Full-width navigation bar */
+/* Actions Container - Full-width dark navy navigation bar */
 .actions-container {
   width: 100%;
   background-color: #1a1a2e;
@@ -35,14 +41,14 @@ h1 {
   font-weight: 700;
 }
 
-/* Navigation links container - centered on Add Employee */
+/* Navigation links container - centered on Add Employee using absolute positioning */
 .actions-nav {
   display: flex;
   align-items: center;
   gap: 40px;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-65%);
+  position: absolute; /* Remove from document flow for precise centering */
+  left: 50%; /* Start at horizontal center */
+  transform: translateX(-65%); /* Offset to center on Add Employee button */
 }
 
 .actions-container button {
@@ -64,15 +70,16 @@ h1 {
   margin-left: 40px;
 }
 
+/* Animated underline on hover - starts at 0 width and expands */
 .actions-container button::after {
-  content: "";
+  content: ""; /* Required for pseudo-element to render */
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 0;
-  height: 2px;
-  background-color: #00d9ff;
-  transition: width 0.3s ease;
+  width: 0; /* Hidden by default */
+  height: 2px; /* Thin cyan line */
+  background-color: #00d9ff; /* Cyan accent color */
+  transition: width 0.3s ease; /* Smooth expand animation */
 }
 
 .actions-container button:hover {
@@ -98,8 +105,12 @@ h1 {
 
 /* ============================================
    EMPLOYEE LIST SIDEBAR
+   ============================================
+   Left sidebar displaying employee cards grouped by job title
+   Features: Scrollable list, hover effects, day indicators
    ============================================ */
 
+/* Sidebar container - fixed width with scrolling for overflow */
 #employee-list-sidebar {
   width: 300px;
   min-width: 300px;
@@ -125,20 +136,21 @@ h1 {
   gap: 10px;
 }
 
-/* Employee Card */
+/* Employee Card - Individual employee display with hover lift effect */
 .employee-card {
   background-color: white;
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition:
-    transform 0.2s,
-    box-shadow 0.2s;
+    transform 0.2s, /* Smooth upward movement */
+    box-shadow 0.2s; /* Shadow expands on hover */
 }
 
+/* Hover effect - card lifts up slightly with stronger shadow */
 .employee-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px); /* Move up 2px */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Stronger shadow for depth */
 }
 
 /* Card Header */
@@ -161,11 +173,11 @@ h1 {
   font-size: 14px;
 }
 
-/* Day Indicators */
+/* Day Indicators - Visual display of work schedule (M T W T F S S) */
 .day-indicators {
   display: flex;
-  gap: 4px;
-  align-self: flex-end;
+  gap: 4px; /* Small spacing between letters */
+  align-self: flex-end; /* Align to right side of card */
 }
 
 .day-indicator {
@@ -174,12 +186,14 @@ h1 {
   text-align: center;
 }
 
+/* Available day - dark green color */
 .day-indicator.available {
-  color: #006400;
+  color: #006400; /* Dark green = working this day */
 }
 
+/* Unavailable day - red color */
 .day-indicator.unavailable {
-  color: #dc143c;
+  color: #dc143c; /* Crimson red = day off */
 }
 
 /* Update Button Inside Form */
@@ -200,35 +214,39 @@ h1 {
   background-color: #7c7bda;
 }
 
-/* Job Title Header in Employee List */
+/* Job Title Header - Separator labels grouping employees by job title */
 .job-title-header {
-  background-color: #4a4a4a;
-  color: #e0e0e0;
+  background-color: #4a4a4a; /* Dark grey background */
+  color: #e0e0e0; /* Light text for contrast */
   padding: 8px 12px;
-  margin: 15px 0 10px 0;
-  border-radius: 0;
-  border-left: 4px solid #666;
+  margin: 15px 0 10px 0; /* Space above each group */
+  border-radius: 0; /* Sharp corners for header look */
+  border-left: 4px solid #666; /* Accent border on left */
   font-weight: 600;
   font-size: 13px;
   text-align: left;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
+  text-transform: uppercase; /* All caps for emphasis */
+  letter-spacing: 1.5px; /* Spaced lettering for professional look */
 }
 
+/* First job title header - remove top margin to align with sidebar top */
 .job-title-header:first-child {
   margin-top: 0;
 }
 
 /* ============================================
    EMPLOYEE FORM
+   ============================================
+   Form for adding/editing employees
+   Features: Grid layout, 7-day availability, time pickers
    ============================================ */
 
-/* Content Area for Employee Form */
+/* Content Area - Main right-side container for form */
 .content-area {
   flex: 1;
 }
 
-/* New Employee Form  */
+/* New Employee Form - Hidden by default, shown when Add Employee clicked */
 #employee-form {
   max-width: 600px;
   margin: 30px auto;
@@ -236,14 +254,15 @@ h1 {
   background-color: #f9f9f9;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  display: none;
+  display: none; /* Hidden until toggled by JavaScript */
 }
 
+/* Name inputs - Grid layout with labels on left, inputs on right */
 .name-inputs {
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 10px 15px;
-  align-items: center;
+  grid-template-columns: auto 1fr; /* Label auto-width, input fills remaining space */
+  gap: 10px 15px; /* Vertical and horizontal spacing */
+  align-items: center; /* Vertically center labels with inputs */
   margin-bottom: 25px;
 }
 
@@ -264,13 +283,14 @@ h1 {
   color: #5e4caf;
 }
 
+/* Day row - Each weekday with checkbox and time pickers */
 .day-row {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: center; /* Vertically align all controls */
+  gap: 10px; /* Space between checkbox, label, and time inputs */
   margin-bottom: 10px;
   padding: 8px;
-  background-color: white;
+  background-color: white; /* White background for each day */
   border-radius: 5px;
 }
 
@@ -297,9 +317,12 @@ h1 {
 
 /* ============================================
    EMPLOYEE FORM BUTTONS
+   ============================================
+   Submit, Cancel, and Remove buttons for employee form
+   Color scheme: Purple (submit), Burgundy (cancel), Black (remove)
    ============================================ */
 
-/* Form Button Group - Container for submit and cancel buttons */
+/* Form Button Group - Flexbox container for side-by-side buttons */
 .form-button-group {
   display: flex;
   gap: 10px;
@@ -360,8 +383,12 @@ h1 {
 
 /* ============================================
    SCHEDULE DISPLAY
+   ============================================
+   Main schedule table with date headers and employee shifts
+   Features: Week selector, validation warnings, job title grouping
    ============================================ */
 
+/* Schedule container - Main wrapper for entire schedule section */
 #schedule-container {
   max-width: 100%;
   margin: 30px auto;
@@ -419,23 +446,25 @@ h1 {
   background-color: #5e8bb5;
 }
 
-/* Schedule Warnings Container */
+/* Schedule Warnings Container - Displays rule violations above table */
 #schedule-warnings {
-  margin-bottom: 20px;
+  margin-bottom: 20px; /* Space between warnings and table */
 }
 
+/* Warning message - Default yellow for warning level alerts */
 .warning-message {
   padding: 15px;
   border-radius: 8px;
   margin-bottom: 12px;
-  border-left: 4px solid;
-  background-color: #fff9e6;
-  border-left-color: #ffc107;
+  border-left: 4px solid; /* Thick accent border on left */
+  background-color: #fff9e6; /* Light yellow background */
+  border-left-color: #ffc107; /* Yellow border for warnings */
 }
 
+/* Error variant - Red styling for error level alerts */
 .warning-message.error {
-  background-color: #ffe6e6;
-  border-left-color: #dc3545;
+  background-color: #ffe6e6; /* Light red background */
+  border-left-color: #dc3545; /* Red border for errors */
 }
 
 .warning-header {
@@ -476,9 +505,9 @@ h1 {
   color: #555;
 }
 
-/* Schedule Table Wrapper */
+/* Schedule Table Wrapper - Enables horizontal scrolling on small screens */
 #schedule-table-wrapper {
-  overflow-x: auto;
+  overflow-x: auto; /* Horizontal scroll for wide tables */
   background-color: white;
   border-radius: 8px;
   padding: 15px;
@@ -498,12 +527,13 @@ h1 {
   border: 1px solid #ddd;
 }
 
+/* Table header cells - Dark blue with sticky positioning */
 .schedule-table th {
-  background-color: #1e3a5f;
+  background-color: #1e3a5f; /* Navy blue header */
   color: white;
   font-weight: 600;
-  position: sticky;
-  top: 0;
+  position: sticky; /* Headers stay visible when scrolling vertically */
+  top: 0; /* Stick to top of viewport */
 }
 
 .schedule-table td {
@@ -528,51 +558,63 @@ h1 {
   cursor: pointer;
 }
 
+/* Alternating row colors - Every even row gets light grey background */
+/* Excludes employee name column and job title separator rows */
 .schedule-table tr:nth-child(even) td:not(.employee-name):not(.job-title-cell) {
-  background-color: #fafafa;
+  background-color: #fafafa; /* Very light grey for zebra striping */
 }
 
-/* Job Title Row in Schedule */
+/* Job Title Row - Black separator row between job title groups in schedule */
 .schedule-table tr.job-title-row {
-  background-color: #000000;
+  background-color: #000000; /* Full black row */
 }
 
+/* Job title cell - Spans entire table width to create visual separator */
 .schedule-table td.job-title-cell {
-  background-color: #000000;
-  color: white;
+  background-color: #000000; /* Black background (forced, overrides alternating) */
+  color: white; /* White text for maximum contrast */
   font-weight: 700;
   text-align: center;
-  padding: 3px;
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  border: 2px solid #000000;
+  padding: 3px; /* Minimal padding for compact separator */
+  font-size: 9px; /* Small text to minimize vertical space */
+  text-transform: uppercase; /* All caps for header style */
+  letter-spacing: 1.5px; /* Spaced lettering */
+  border: 2px solid #000000; /* Force border to be black (prevents cell borders showing through) */
 }
 
-/* Violation Cell Highlighting */
+/* Violation Cell Highlighting - Applied when schedule rules are violated */
+/* !important used to override default table styling and alternating rows */
+
+/* Warning level - Yellow highlighting for header columns */
 .schedule-table th.violation-warning {
-  background-color: #fff3cd !important;
-  border: 2px solid #ffc107 !important;
+  background-color: #fff3cd !important; /* Light yellow background */
+  border: 2px solid #ffc107 !important; /* Yellow border for visibility */
 }
 
+/* Error level - Red highlighting for header columns */
 .schedule-table th.violation-error {
-  background-color: #f8d7da !important;
-  border: 2px solid #dc3545 !important;
+  background-color: #f8d7da !important; /* Light red background */
+  border: 2px solid #dc3545 !important; /* Red border for urgency */
 }
 
+/* Warning level - Yellow highlighting for data cells */
 .schedule-table td.violation-warning {
-  background-color: #fff9e6 !important;
+  background-color: #fff9e6 !important; /* Pale yellow background */
 }
 
+/* Error level - Red highlighting for data cells */
 .schedule-table td.violation-error {
-  background-color: #ffe6e6 !important;
+  background-color: #ffe6e6 !important; /* Pale red background */
 }
 
 /* ============================================
    TEST DATA FORM
+   ============================================
+   Modal overlay for generating random test employees
+   Used for demo/testing purposes
    ============================================ */
 
-/* Overlay for test data form */
+/* Overlay - Semi-transparent backdrop covering entire screen */
 .form-overlay {
   position: fixed;
   top: 0;
@@ -671,9 +713,13 @@ h1 {
 
 /* ============================================
    RULES MANAGEMENT MODAL
+   ============================================
+   Universal validation rules system (Phase 1-3)
+   Features: CRUD operations, condition types, alert levels
+   Allows custom rules for any job title and business type
    ============================================ */
 
-/* Badge for rules count in navbar */
+/* Badge - Displays count of active rules in navbar */
 .badge {
   display: inline-block;
   background-color: #00d9ff;
@@ -713,30 +759,34 @@ h1 {
   line-height: 1.5;
 }
 
-/* Rules List */
+/* Rules List - Container for all rule items */
 .rules-list {
   margin-bottom: 25px;
 }
 
+/* Rule item - Individual rule card with color-coded left border */
 .rule-item {
   background-color: #f9f9f9;
-  border-left: 4px solid #00d9ff;
+  border-left: 4px solid #00d9ff; /* Default cyan border */
   padding: 15px;
   margin-bottom: 12px;
   border-radius: 5px;
-  transition: box-shadow 0.3s;
+  transition: box-shadow 0.3s; /* Smooth shadow on hover */
 }
 
+/* Hover effect - subtle shadow for interactivity */
 .rule-item:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Error alert level - Red left border */
 .rule-item.alert-error {
-  border-left-color: #dc3545;
+  border-left-color: #dc3545; /* Red border for error rules */
 }
 
+/* Warning alert level - Yellow left border */
 .rule-item.alert-warning {
-  border-left-color: #ffc107;
+  border-left-color: #ffc107; /* Yellow border for warning rules */
 }
 
 .rule-header {
@@ -823,9 +873,9 @@ h1 {
   font-style: italic;
 }
 
-/* Rule Form */
+/* Rule Form - Form for creating/editing rules (shown/hidden dynamically) */
 #rule-form-container {
-  background-color: #f9f9f9;
+  background-color: #f9f9f9; /* Light grey background to distinguish from rules list */
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 20px;
@@ -860,18 +910,19 @@ h1 {
   box-sizing: border-box;
 }
 
+/* Focus state - Cyan border when input is active */
 .rule-form-group input:focus,
 .rule-form-group select:focus {
-  outline: none;
-  border-color: #00d9ff;
+  outline: none; /* Remove default browser outline */
+  border-color: #00d9ff; /* Cyan accent color matches app theme */
 }
 
-/* Beta Message */
+/* Beta Message - Indicates more condition types coming soon */
 .beta-msg {
-  color: #dc3545;
+  color: #dc3545; /* Red color to draw attention */
   font-size: 18px;
-  font-style: italic;
-  margin: 5px 0 0 0;
+  font-style: italic; /* Softer look for informational text */
+  margin: 5px 0 0 0; /* Small top margin below dropdown */
 }
 
 .rule-form-buttons {
@@ -949,8 +1000,18 @@ h1 {
 
 /* ============================================
    RESPONSIVE DESIGN - MEDIA QUERIES
+   ============================================
+   Three breakpoints for optimal display on all devices:
+   - 1024px: Tablet & small desktop adjustments
+   - 768px: Tablet portrait (major layout changes)
+   - 480px: Mobile phones (single column, stacked)
    ============================================ */
 
+/* ========================================
+   BREAKPOINT 1: Tablet & Small Desktop
+   Max-width: 1024px
+   Changes: Reduce sidebar width, adjust spacing
+   ======================================== */
 /* Tablet & Small Desktop (max-width: 1024px) */
 @media (max-width: 1024px) {
   .main-container {
@@ -972,6 +1033,11 @@ h1 {
   }
 }
 
+/* ========================================
+   BREAKPOINT 2: Tablet Portrait
+   Max-width: 768px
+   Changes: Stack layout vertically, navbar stacks, full-width sidebar
+   ======================================== */
 /* Tablet Portrait (max-width: 768px) */
 @media (max-width: 768px) {
   h1 {
@@ -1063,6 +1129,11 @@ h1 {
   }
 }
 
+/* ========================================
+   BREAKPOINT 3: Mobile Phones
+   Max-width: 480px
+   Changes: Single column layout, stacked buttons, compressed tables
+   ======================================== */
 /* Mobile (max-width: 480px) */
 @media (max-width: 480px) {
   h1 {
@@ -1070,10 +1141,10 @@ h1 {
     margin-top: 5px;
   }
 
-  /* Navbar - Compact mobile view */
+  /* Navbar - Compact mobile view with vertical stacking */
   .actions-container {
-    padding: 12px 15px;
-    gap: 12px;
+    padding: 12px 15px; /* Reduced padding for mobile */
+    gap: 12px; /* Tighter spacing between elements */
   }
 
   .actions-title {
@@ -1081,10 +1152,11 @@ h1 {
     letter-spacing: 1px;
   }
 
+  /* Mobile navigation - Vertical stack of all buttons */
   .actions-nav {
-    flex-direction: column;
+    flex-direction: column; /* Stack buttons vertically */
     gap: 12px;
-    width: 100%;
+    width: 100%; /* Full width for easy tapping */
   }
 
   .actions-container button {
@@ -1153,15 +1225,17 @@ h1 {
     font-size: 16px;
   }
 
+  /* Day row - Stack all controls vertically for mobile */
   .day-row {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: column; /* Checkbox, label, and times stack vertically */
+    align-items: flex-start; /* Left align all controls */
     padding: 10px;
   }
 
+  /* Day label - Full width for easy reading on mobile */
   .day-row label {
-    min-width: 100%;
-    margin-bottom: 5px;
+    min-width: 100%; /* Full width label */
+    margin-bottom: 5px; /* Space below label */
   }
 
   .day-row input[type="checkbox"] {
@@ -1174,9 +1248,9 @@ h1 {
     min-width: 100%;
   }
 
-  /* Form buttons - Stack on mobile */
+  /* Form buttons - Stack vertically for easier tapping on mobile */
   .form-button-group {
-    flex-direction: column;
+    flex-direction: column; /* Stack instead of side-by-side */
     gap: 8px;
   }
 
