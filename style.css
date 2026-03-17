@@ -1,5 +1,3 @@
-
-
 /* ============================================
    GENERAL STYLES
    ============================================
@@ -143,8 +141,8 @@ h1 {
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition:
-    transform 0.2s, /* Smooth upward movement */
-    box-shadow 0.2s; /* Shadow expands on hover */
+    transform 0.2s,
+    /* Smooth upward movement */ box-shadow 0.2s; /* Shadow expands on hover */
 }
 
 /* Hover effect - card lifts up slightly with stronger shadow */
@@ -608,6 +606,85 @@ h1 {
 }
 
 /* ============================================
+   FAQS SECTION
+   ============================================
+   Frequently asked questions display in content area
+   Features: Clear sections, readable typography, list styling
+   ============================================ */
+
+/* FAQs container - matches employee form and schedule styling */
+#faqs-container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Main FAQ heading */
+#faqs-container h2 {
+  color: #1e3a5f; /* Navy blue to match schedule headers */
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 28px;
+}
+
+/* Individual FAQ section - white card with purple accent */
+.faq-section {
+  background-color: white;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #5e4caf; /* Purple accent border matches app theme */
+}
+
+/* FAQ section headings */
+.faq-section h3 {
+  color: #5e4caf; /* Purple matches border and app buttons */
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+/* FAQ paragraphs - readable line height */
+.faq-section p {
+  color: #333;
+  line-height: 1.6; /* Comfortable reading spacing */
+  margin-bottom: 12px;
+}
+
+/* Unordered and ordered lists */
+.faq-section ul,
+.faq-section ol {
+  color: #333;
+  line-height: 1.8; /* Extra spacing for list readability */
+  margin-left: 20px;
+}
+
+/* List items with bottom spacing */
+.faq-section li {
+  margin-bottom: 8px;
+}
+
+/* Strong text - navy blue for emphasis */
+.faq-section strong {
+  color: #1e3a5f; /* Navy blue matches schedule theme */
+  font-weight: 600;
+}
+
+/* Italic text - lighter grey for tips/notes */
+.faq-section em {
+  color: #666;
+  font-style: italic;
+}
+
+/* Last FAQ section - remove bottom margin for clean ending */
+.faq-section:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================================
    TEST DATA FORM
    ============================================
    Modal overlay for generating random test employees
@@ -1063,7 +1140,7 @@ h1 {
     transform: none;
     gap: 20px;
     flex-wrap: wrap;
-    justify-content: center
+    justify-content: center;
   }
 
   #test-data-link {
@@ -1327,6 +1404,36 @@ h1 {
   .schedule-table td.job-title-cell {
     font-size: 8px;
     padding: 2px;
+  }
+
+  /* FAQs - Mobile adjustments */
+  #faqs-container {
+    padding: 15px; /* Reduced padding for mobile */
+    margin: 15px 0;
+  }
+
+  #faqs-container h2 {
+    font-size: 22px; /* Smaller heading for mobile */
+    margin-bottom: 20px;
+  }
+
+  .faq-section {
+    padding: 15px; /* Reduced padding for mobile */
+    margin-bottom: 15px;
+  }
+
+  .faq-section h3 {
+    font-size: 18px; /* Smaller subheading for mobile */
+  }
+
+  .faq-section p {
+    font-size: 14px; /* Smaller text for mobile readability */
+  }
+
+  .faq-section ul,
+  .faq-section ol {
+    font-size: 14px; /* Smaller list text */
+    margin-left: 15px; /* Reduce indent on mobile */
   }
 
   /* Test data form - Mobile adjustments */
