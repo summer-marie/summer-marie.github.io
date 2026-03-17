@@ -419,6 +419,63 @@ h1 {
   background-color: #5e8bb5;
 }
 
+/* Schedule Warnings Container */
+#schedule-warnings {
+  margin-bottom: 20px;
+}
+
+.warning-message {
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  border-left: 4px solid;
+  background-color: #fff9e6;
+  border-left-color: #ffc107;
+}
+
+.warning-message.error {
+  background-color: #ffe6e6;
+  border-left-color: #dc3545;
+}
+
+.warning-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.warning-icon {
+  font-size: 20px;
+}
+
+.warning-message.error .warning-icon {
+  color: #dc3545;
+}
+
+.warning-message:not(.error) .warning-icon {
+  color: #ffc107;
+}
+
+.warning-details {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.6;
+  margin-left: 30px;
+}
+
+.warning-details strong {
+  color: #333;
+}
+
+.violated-dates-list {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #555;
+}
+
 /* Schedule Table Wrapper */
 #schedule-table-wrapper {
   overflow-x: auto;
@@ -490,6 +547,25 @@ h1 {
   text-transform: uppercase;
   letter-spacing: 1.5px;
   border: 2px solid #000000;
+}
+
+/* Violation Cell Highlighting */
+.schedule-table th.violation-warning {
+  background-color: #fff3cd !important;
+  border: 2px solid #ffc107 !important;
+}
+
+.schedule-table th.violation-error {
+  background-color: #f8d7da !important;
+  border: 2px solid #dc3545 !important;
+}
+
+.schedule-table td.violation-warning {
+  background-color: #fff9e6 !important;
+}
+
+.schedule-table td.violation-error {
+  background-color: #ffe6e6 !important;
 }
 
 /* ============================================
@@ -1116,6 +1192,27 @@ h1 {
 
   .schedule-header h2 {
     font-size: 18px;
+  }
+
+  /* Schedule warnings - Mobile */
+  .warning-message {
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  .warning-header {
+    font-size: 14px;
+    flex-wrap: wrap;
+  }
+
+  .warning-details {
+    font-size: 12px;
+    margin-left: 0;
+  }
+
+  .violated-dates-list {
+    font-size: 12px;
+    word-break: break-word;
   }
 
   .schedule-controls {

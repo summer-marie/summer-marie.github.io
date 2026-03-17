@@ -314,14 +314,14 @@ function generateSchedule() {
   // Create table HTML
   let tableHTML = '<table class="schedule-table"><thead><tr><th>Employee</th>';
 
-  // Add date headers
-  dates.forEach((date) => {
+  // Add date headers with data attributes
+  dates.forEach((date, dateIndex) => {
     const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
     const dateStr = date.toLocaleDateString("en-US", {
       month: "numeric",
       day: "numeric",
     });
-    tableHTML += `<th>${dayName}<br>${dateStr}</th>`;
+    tableHTML += `<th data-date-index="${dateIndex}">${dayName}<br>${dateStr}</th>`;
   });
 
   tableHTML += "</tr></thead><tbody>";
@@ -359,10 +359,10 @@ function generateSchedule() {
 
       // Add rows for employees in this group
       group.employees.forEach((employee) => {
-        tableHTML += `<tr><td class="employee-name">${employee.firstName} ${employee.lastName}</td>`;
+        tableHTML += `<tr data-job-title="${jobTitle}"><td class="employee-name">${employee.firstName} ${employee.lastName}</td>`;
 
-        // Add cells for each date
-        dates.forEach((date) => {
+        // Add cells for each date with data attributes
+        dates.forEach((date, dateIndex) => {
           const dayOfWeek = date
             .toLocaleDateString("en-US", { weekday: "long" })
             .toLowerCase();
@@ -377,9 +377,9 @@ function generateSchedule() {
             // Format time as abbreviated (e.g., "7-3pm" for 7:00-15:00)
             const startTime = formatTimeSimple(daySchedule.start);
             const endTime = formatTime(daySchedule.end);
-            tableHTML += `<td class="shift-cell">${startTime}-${endTime}</td>`;
+            tableHTML += `<td class="shift-cell" data-date-index="${dateIndex}" data-job-title="${jobTitle}">${startTime}-${endTime}</td>`;
           } else {
-            tableHTML += `<td class="shift-cell">-</td>`;
+            tableHTML += `<td class="shift-cell" data-date-index="${dateIndex}" data-job-title="${jobTitle}">-</td>`;
           }
         });
 
@@ -390,15 +390,14 @@ function generateSchedule() {
   tableHTML += "</tbody></table>";
   tableWrapper.innerHTML = tableHTML;
 
-  // Run validation checks (Phase 2)
+  // Run validation checks and display results (Phase 2 & 3)
   const violations = validateSchedule(dates, employees);
   
-  // Log violations for testing (will be displayed in Phase 3)
-  if (Object.keys(violations).length > 0) {
-    console.log("Schedule Violations Found:", violations);
-  } else {
-    console.log("No schedule violations - all rules met!");
-  }
+  // Display warning messages
+  displayRuleViolations(violations);
+  
+  // Apply visual styling to violated cells
+  applyViolationStyling(violations);
 }
 
 // Helper function to format time without am/pm (just the hour number)
@@ -1092,3 +1091,113 @@ function analyzeSchedule() {
 
 // Expose test function globally for console access
 window.analyzeSchedule = analyzeSchedule;
+
+// ============================================
+// VISUAL FEEDBACK - PHASE 3
+// ============================================
+
+// Display rule violation warnings above the schedule table
+function displayRuleViolations(violations) {
+  const warningsContainer = document.getElementById("schedule-warnings");
+  
+  // Clear previous warnings
+  warningsContainer.innerHTML = "";
+  
+  // If no violations, exit early
+  if (Object.keys(violations).length === 0) {
+    return;
+  }
+  
+  // Create warning message for each violated rule
+  Object.values(violations).forEach(violation => {
+    const messageDiv = document.createElement("div");
+    messageDiv.className = `warning-message ${violation.alertLevel}`;
+    
+    // Icon based on alert level
+    const icon = violation.alertLevel === "error" ? "🚫" : "⚠️";
+    
+    // Format the violated dates list
+    const datesText = violation.violatedDates.map(d => {
+      const dateStr = d.date.toLocaleDateString("en-US", { 
+        weekday: "short", 
+        month: "numeric", 
+        day: "numeric" 
+      });
+      return `${dateStr} (${d.actualCount}/${d.requiredCount})`;
+    }).join(", ");
+    
+    messageDiv.innerHTML = `
+      <div class="warning-header">
+        <span class="warning-icon">${icon}</span>
+        <span>${violation.ruleName}</span>
+      </div>
+      <div class="warning-details">
+        <strong>Job Title:</strong> ${violation.jobTitle}<br>
+        <strong>Required:</strong> Minimum ${violation.threshold} per day<br>
+        <strong>Violations:</strong> ${violation.violatedDates.length} day(s) below threshold
+        <div class="violated-dates-list">
+          <strong>Dates:</strong> ${datesText}
+        </div>
+      </div>
+    `;
+    
+    warningsContainer.appendChild(messageDiv);
+  });
+}
+
+// Apply visual styling to violated columns in the schedule table
+function applyViolationStyling(violations) {
+  // If no violations, exit early
+  if (Object.keys(violations).length === 0) {
+    return;
+  }
+  
+  // Build a map of date indices to alert levels and job titles
+  const violationMap = {};
+  
+  Object.values(violations).forEach(violation => {
+    violation.violatedDates.forEach(vDate => {
+      const dateIndex = vDate.dateIndex;
+      const jobTitle = violation.jobTitle;
+      
+      if (!violationMap[dateIndex]) {
+        violationMap[dateIndex] = {};
+      }
+      
+      // Store the alert level for this job title and date
+      // If multiple rules apply, error takes precedence over warning
+      if (!violationMap[dateIndex][jobTitle] || violation.alertLevel === "error") {
+        violationMap[dateIndex][jobTitle] = violation.alertLevel;
+      }
+    });
+  });
+  
+  // Apply styling to table headers
+  Object.keys(violationMap).forEach(dateIndex => {
+    const headers = document.querySelectorAll(`th[data-date-index="${dateIndex}"]`);
+    headers.forEach(header => {
+      // Determine worst alert level for this date (error > warning)
+      const alertLevels = Object.values(violationMap[dateIndex]);
+      const worstLevel = alertLevels.includes("error") ? "error" : "warning";
+      header.classList.add(`violation-${worstLevel}`);
+    });
+  });
+  
+  // Apply styling to table cells for specific job titles
+  Object.keys(violationMap).forEach(dateIndex => {
+    const jobTitles = Object.keys(violationMap[dateIndex]);
+    
+    jobTitles.forEach(jobTitle => {
+      const alertLevel = violationMap[dateIndex][jobTitle];
+      
+      // Find all cells for this date index and job title
+      const cells = document.querySelectorAll(
+        `td[data-date-index="${dateIndex}"][data-job-title="${jobTitle}"]`
+      );
+      
+      cells.forEach(cell => {
+        cell.classList.add(`violation-${alertLevel}`);
+      });
+    });
+  });
+}
