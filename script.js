@@ -1,22 +1,41 @@
-// Track current editing employee ID (null if adding new)
-let currentEditingEmployeeId = null;
+// ============================================
+// UNIVERSAL SCHEDULE CREATOR - MAIN SCRIPT
+// ============================================
+// Employee scheduling app with availability tracking,
+// multi-week schedule generation, custom validation rules,
+// and dynamic UI features.
+// ============================================
 
-// Get DOM elements for content area sections
+// ============================================
+// CONTENT AREA MANAGEMENT
+// ============================================
+// Manages visibility of main content sections: Employee Form, Schedule Display, FAQs
+
+// DOM element references for content sections
 const addEmployeeBtn = document.getElementById("add-employee-link");
 const employeeForm = document.getElementById("employee-form");
 const scheduleContainer = document.getElementById("schedule-container");
 const faqsContainer = document.getElementById("faqs-container");
 const faqsBtn = document.getElementById("faqs-link");
 
-// Toggle FAQs visibility
+// ============================================
+// FAQs SECTION
+// ============================================
+
+/**
+ * Toggle FAQ section visibility and hide other content
+ */
 faqsBtn.addEventListener("click", () => {
   faqsContainer.style.display = "block";
   employeeForm.style.display = "none";
   scheduleContainer.style.display = "none";
-  updateSidebarHeight(); // Update sidebar height when FAQs shown
+  updateSidebarHeight();
 });
 
-// FAQ Accordion functionality
+/**
+ * Initialize FAQ accordion functionality
+ * Allows only one FAQ section to be expanded at a time
+ */
 function initializeFAQAccordion() {
   const faqSections = document.querySelectorAll('.faq-section');
   
@@ -48,14 +67,19 @@ function initializeFAQAccordion() {
   });
 }
 
-// Initialize FAQ accordion when page loads
+// Initialize accordion on page load
 initializeFAQAccordion();
 
 // ============================================
 // DYNAMIC SIDEBAR HEIGHT
 // ============================================
+// Automatically adjusts employee list sidebar height to match
+// the currently visible content (desktop only, > 768px viewport)
 
-// Function to update sidebar height to match visible content (desktop only)
+/**
+ * Update sidebar height to match visible content (desktop only)
+ * On mobile (< 769px), CSS handles fixed height with scrolling
+ */
 function updateSidebarHeight() {
   const sidebar = document.getElementById("employee-list-sidebar");
   
@@ -86,16 +110,26 @@ function updateSidebarHeight() {
   }
 }
 
-// Debounce function for window resize
+// Debounced window resize handler for performance
 let resizeTimeout;
 window.addEventListener("resize", () => {
   clearTimeout(resizeTimeout);
   resizeTimeout = setTimeout(() => {
     updateSidebarHeight();
-  }, 150); // Wait 150ms after resize stops
+  }, 150);
 });
 
-// toggle employee form visibility
+// ============================================
+// EMPLOYEE MANAGEMENT
+// ============================================
+// Add, edit, remove, and display employees with availability schedules
+
+// Track current editing employee ID (null when adding new)
+let currentEditingEmployeeId = null;
+
+/**
+ * Toggle employee form visibility
+ */
 addEmployeeBtn.addEventListener("click", () => {
   currentEditingEmployeeId = null; // Reset to add mode
   employeeForm.reset(); // Clear form
@@ -110,10 +144,12 @@ addEmployeeBtn.addEventListener("click", () => {
   } else {
     employeeForm.style.display = "none";
   }
-  updateSidebarHeight(); // Update sidebar height when form visibility changes
+  updateSidebarHeight();
 });
 
-// Handle cancel button click
+/**
+ * Handle cancel button - hide form and reset state
+ */
 const cancelFormBtn = document.getElementById("cancel-form-btn");
 cancelFormBtn.addEventListener("click", () => {
   employeeForm.reset();
@@ -122,7 +158,9 @@ cancelFormBtn.addEventListener("click", () => {
   document.getElementById("remove-employee-btn").style.display = "none";
 });
 
-// Handle remove employee button click
+/**
+ * Handle remove employee button - delete employee with confirmation
+ */
 const removeEmployeeBtn = document.getElementById("remove-employee-btn");
 removeEmployeeBtn.addEventListener("click", () => {
   if (currentEditingEmployeeId && confirm("Are you sure you want to remove this employee?")) {
@@ -135,7 +173,9 @@ removeEmployeeBtn.addEventListener("click", () => {
   }
 });
 
-// Handle form submission
+/**
+ * Handle employee form submission - save or update employee
+ */
 employeeForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
@@ -200,14 +240,24 @@ employeeForm.addEventListener("submit", (e) => {
   currentEditingEmployeeId = null;
 });
 
-// Local storage functions
+// ============================================
+// LOCAL STORAGE - EMPLOYEE DATA
+// ============================================
+
+/**
+ * Save a new employee to localStorage
+ * @param {Object} employee - Employee object with id, name, jobTitle, and schedule
+ */
 function saveEmployee(employee) {
   let employees = getEmployees();
   employees.push(employee);
   localStorage.setItem("employees", JSON.stringify(employees));
 }
 
-// Update existing employee in local storage
+/**
+ * Update existing employee in localStorage
+ * @param {Object} updatedEmployee - Updated employee object
+ */
 function updateEmployee(updatedEmployee) {
   let employees = getEmployees();
   // Find index of employee to update
@@ -220,20 +270,33 @@ function updateEmployee(updatedEmployee) {
   }
 }
 
-// Get employees from local storage
+/**
+ * Get all employees from localStorage
+ * @returns {Array} Array of employee objects
+ */
 function getEmployees() {
   const employees = localStorage.getItem("employees");
   return employees ? JSON.parse(employees) : [];
 }
 
-// Remove employee from local storage
+/**
+ * Remove employee from localStorage
+ * @param {String|Number} employeeId - ID of employee to remove
+ */
 function removeEmployee(employeeId) {
   let employees = getEmployees();
   employees = employees.filter((emp) => emp.id !== employeeId);
   localStorage.setItem("employees", JSON.stringify(employees));
 }
 
-// Function to populate form with employee data
+// ============================================
+// EMPLOYEE FORM & LIST RENDERING
+// ============================================
+
+/**
+ * Populate employee form with existing employee data for editing
+ * @param {Object} employee - Employee object to edit
+ */
 function populateFormForEdit(employee) {
   currentEditingEmployeeId = employee.id;
 
@@ -264,7 +327,10 @@ function populateFormForEdit(employee) {
   document.getElementById("remove-employee-btn").style.display = "block";
 }
 
-// Render employee list
+/**
+ * Render employee list in sidebar
+ * Groups employees by job title and displays availability indicators
+ */
 function renderEmployeeList() {
   const employees = getEmployees();
   const employeeList = document.getElementById("employee-list");
@@ -352,7 +418,9 @@ function renderEmployeeList() {
     });
 }
 
-// Load employee list on page load
+/**
+ * Initialize employee list on page load
+ */
 document.addEventListener("DOMContentLoaded", () => {
   renderEmployeeList();
 });
@@ -360,10 +428,12 @@ document.addEventListener("DOMContentLoaded", () => {
 // ============================================
 // SCHEDULE GENERATION
 // ============================================
+// Generate multi-week schedules with pagination for 3+ weeks
+// Displays employee shifts based on availability
 
-// Pagination state
+// Pagination state variables
 let currentPage = 0; // 0-indexed (page 0 = page 1 in display)
-const weeksPerPage = 2; // Show 2 weeks per page
+const weeksPerPage = 2; // Show 2 weeks per page for 3+ week schedules
 
 const generateScheduleBtn = document.getElementById("generate-schedule-link");
 const weeksSelect = document.getElementById("weeks-select");
@@ -379,28 +449,40 @@ const nextBtnBottom = document.getElementById("next-page-btn-bottom");
 const pageIndicatorTop = document.getElementById("page-indicator-top");
 const pageIndicatorBottom = document.getElementById("page-indicator-bottom");
 
-// Generate schedule when button is clicked
+/**
+ * Event: Generate schedule button clicked
+ * Resets pagination and displays schedule
+ */
 generateScheduleBtn.addEventListener("click", () => {
   currentPage = 0; // Reset to first page
   generateSchedule();
   scheduleContainer.style.display = "block";
   employeeForm.style.display = "none";
   faqsContainer.style.display = "none";
-  updateSidebarHeight(); // Update sidebar height after schedule is shown
+  updateSidebarHeight();
 });
 
-// Regenerate schedule when weeks change or regenerate button clicked
+/**
+ * Event: Regenerate button clicked
+ * Resets to first page and regenerates schedule
+ */
 regenerateBtn.addEventListener("click", () => {
   currentPage = 0; // Reset to first page
   generateSchedule();
 });
 
+/**
+ * Event: Weeks dropdown changed
+ * Resets to first page when user selects different week count
+ */
 weeksSelect.addEventListener("change", () => {
-  currentPage = 0; // Reset to first page when weeks change
+  currentPage = 0;
   generateSchedule();
 });
 
-// Pagination button event listeners
+// ============================================
+// PAGINATION EVENT LISTENERS
+// ============================================
 prevBtnTop.addEventListener("click", () => {
   if (currentPage > 0) {
     currentPage--;
@@ -417,6 +499,7 @@ nextBtnTop.addEventListener("click", () => {
   }
 });
 
+// Bottom navigation: Previous page
 prevBtnBottom.addEventListener("click", () => {
   if (currentPage > 0) {
     currentPage--;
@@ -424,6 +507,7 @@ prevBtnBottom.addEventListener("click", () => {
   }
 });
 
+// Bottom navigation: Next page
 nextBtnBottom.addEventListener("click", () => {
   const numberOfWeeks = parseInt(weeksSelect.value);
   const totalPages = Math.ceil(numberOfWeeks / weeksPerPage);
@@ -503,10 +587,6 @@ function generateSchedule() {
     groupedEmployees[normalizedTitle].employees.push(employee);
   });
 
-  // Debug: Log grouped job titles
-  console.log('Job titles found:', Object.keys(groupedEmployees).map(k => groupedEmployees[k].displayTitle));
-  console.log('Number of job title groups:', Object.keys(groupedEmployees).length);
-
   // Add rows for each group
   Object.keys(groupedEmployees)
     .sort()
@@ -573,7 +653,11 @@ function generateSchedule() {
   updateSidebarHeight();
 }
 
-// Update pagination controls (both top and bottom)
+/**
+ * Update pagination controls (synchronizes top and bottom)
+ * Handles button enable/disable states and page indicator text
+ * @param {Number} numberOfWeeks - Total number of weeks in schedule
+ */
 function updatePaginationControls(numberOfWeeks) {
   const totalPages = Math.ceil(numberOfWeeks / weeksPerPage);
   const displayPage = currentPage + 1; // Convert 0-indexed to 1-indexed for display
@@ -601,7 +685,15 @@ function updatePaginationControls(numberOfWeeks) {
   nextBtnBottom.style.cursor = nextDisabled ? "not-allowed" : "pointer";
 }
 
-// Helper function to format time without am/pm (just the hour number)
+// ============================================
+// TIME FORMATTING HELPERS
+// ============================================
+
+/**
+ * Format time without AM/PM (just hour number)
+ * @param {String} time - Time in HH:MM format
+ * @returns {String} Hour as string (e.g., "7", "11")
+ */
 function formatTimeSimple(time) {
   if (!time) return "";
   const [hours, minutes] = time.split(":");
@@ -617,7 +709,11 @@ function formatTimeSimple(time) {
   return hour.toString();
 }
 
-// Helper function to format time (convert 14:00 to 2pm, 09:00 to 9am, etc.)
+/**
+ * Format time with AM/PM (e.g., "2pm", "9am")
+ * @param {String} time - Time in HH:MM format
+ * @returns {String} Formatted time (e.g., "2pm", "11am")
+ */
 function formatTime(time) {
   if (!time) return "";
   // Split time into hours and minutes
@@ -642,6 +738,7 @@ function formatTime(time) {
 // ============================================
 // TEST DATA GENERATION
 // ============================================
+// Generate random employees for testing and demo purposes
 
 const testDataBtn = document.getElementById("test-data-link");
 const testDataOverlay = document.getElementById("test-data-form-overlay");
@@ -840,8 +937,11 @@ testDataForm.addEventListener("submit", (e) => {
   alert(`Successfully generated ${numEmployees} test employees!`);
 });
 
-// Helper function to generate random work days
-// 3-6 days per week, with 5 being most common
+/**
+ * Generate random work days for test employees
+ * Weighted distribution: 3-6 days per week, with 5 being most common
+ * @returns {Array} Array of day names (e.g., ["monday", "tuesday", ...])
+ */
 function generateRandomWorkDays() {
   const allDays = [
     "monday",
@@ -874,6 +974,8 @@ function generateRandomWorkDays() {
 // ============================================
 // RULES MANAGEMENT SYSTEM
 // ============================================
+// Create, edit, and manage custom schedule validation rules
+// Supports multiple rule types and alert levels
 
 const manageRulesBtn = document.getElementById("manage-rules-link");
 const rulesModalOverlay = document.getElementById("rules-modal-overlay");
@@ -951,20 +1053,33 @@ ruleForm.addEventListener("submit", (e) => {
   updateRulesCount();
 });
 
-// Get all rules from localStorage
+// ============================================
+// LOCAL STORAGE - RULES DATA
+// ============================================
+
+/**
+ * Get all validation rules from localStorage
+ * @returns {Array} Array of rule objects
+ */
 function getRules() {
   const rules = localStorage.getItem("scheduleRules");
   return rules ? JSON.parse(rules) : [];
 }
 
-// Save a new rule
+/**
+ * Save a new validation rule to localStorage
+ * @param {Object} rule - Rule object with conditions and thresholds
+ */
 function saveRule(rule) {
   const rules = getRules();
   rules.push(rule);
   localStorage.setItem("scheduleRules", JSON.stringify(rules));
 }
 
-// Update an existing rule
+/**
+ * Update an existing rule in localStorage
+ * @param {Object} updatedRule - Updated rule object
+ */
 function updateRule(updatedRule) {
   const rules = getRules();
   const index = rules.findIndex((r) => r.id === updatedRule.id);
@@ -974,7 +1089,10 @@ function updateRule(updatedRule) {
   }
 }
 
-// Delete a rule
+/**
+ * Delete a rule from localStorage
+ * @param {String} ruleId - ID of rule to delete
+ */
 function deleteRule(ruleId) {
   const rules = getRules();
   const filtered = rules.filter((r) => r.id !== ruleId);
@@ -983,13 +1101,20 @@ function deleteRule(ruleId) {
   updateRulesCount();
 }
 
-// Get rule by ID
+/**
+ * Get a specific rule by ID
+ * @param {String} ruleId - ID of rule to retrieve
+ * @returns {Object} Rule object or undefined
+ */
 function getRuleById(ruleId) {
   const rules = getRules();
   return rules.find((r) => r.id === ruleId);
 }
 
-// Show rule form for creating or editing
+/**
+ * Show rule form for creating or editing
+ * @param {Object|null} rule - Rule to edit, or null for new rule
+ */
 function showRuleForm(rule = null) {
   ruleFormContainer.style.display = "block";
   
@@ -1028,14 +1153,18 @@ function showRuleForm(rule = null) {
   ruleFormContainer.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
-// Hide rule form
+/**
+ * Hide rule form and reset state
+ */
 function hideRuleForm() {
   ruleFormContainer.style.display = "none";
   ruleForm.reset();
   currentEditingRuleId = null;
 }
 
-// Render rules list
+/**
+ * Render list of all validation rules in modal
+ */
 function renderRulesList() {
   const rules = getRules();
   
@@ -1087,7 +1216,10 @@ function renderRulesList() {
   });
 }
 
-// Update rules count badge in navbar
+/**
+ * Update rules count badge in navbar
+ * Shows number of active rules
+ */
 function updateRulesCount() {
   const rules = getRules();
   if (rules.length > 0) {
@@ -1098,7 +1230,9 @@ function updateRulesCount() {
   }
 }
 
-// Initialize rules count on page load
+/**
+ * Initialize rules count on page load
+ */
 document.addEventListener("DOMContentLoaded", () => {
   updateRulesCount();
 });
@@ -1294,10 +1428,15 @@ function analyzeSchedule() {
 window.analyzeSchedule = analyzeSchedule;
 
 // ============================================
-// VISUAL FEEDBACK - PHASE 3
+// VISUAL FEEDBACK
 // ============================================
+// Display rule violations with warnings and cell highlighting
 
-// Display rule violation warnings above the schedule table
+/**
+ * Display rule violation warnings above schedule table
+ * Shows detailed information about each violated rule
+ * @param {Object} violations - Violations object from validateSchedule()
+ */
 function displayRuleViolations(violations) {
   const warningsContainer = document.getElementById("schedule-warnings");
   
@@ -1346,7 +1485,11 @@ function displayRuleViolations(violations) {
   });
 }
 
-// Apply visual styling to violated columns in the schedule table
+/**
+ * Apply visual styling to violated date columns in schedule table
+ * Highlights table headers and cells based on alert level (warning/error)
+ * @param {Object} violations - Violations object from validateSchedule()
+ */
 function applyViolationStyling(violations) {
   // If no violations, exit early
   if (Object.keys(violations).length === 0) {
