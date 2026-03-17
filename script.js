@@ -13,6 +13,7 @@ faqsBtn.addEventListener("click", () => {
   faqsContainer.style.display = "block";
   employeeForm.style.display = "none";
   scheduleContainer.style.display = "none";
+  updateSidebarHeight(); // Update sidebar height when FAQs shown
 });
 
 // FAQ Accordion functionality
@@ -50,6 +51,50 @@ function initializeFAQAccordion() {
 // Initialize FAQ accordion when page loads
 initializeFAQAccordion();
 
+// ============================================
+// DYNAMIC SIDEBAR HEIGHT
+// ============================================
+
+// Function to update sidebar height to match visible content (desktop only)
+function updateSidebarHeight() {
+  const sidebar = document.getElementById("employee-list-sidebar");
+  
+  // Only apply dynamic height on desktop (viewport width >= 769px)
+  if (window.innerWidth < 769) {
+    sidebar.style.height = ""; // Reset height on mobile, let CSS handle it
+    return;
+  }
+
+  // Determine which content is currently visible
+  let visibleContent = null;
+  
+  if (employeeForm.style.display === "block") {
+    visibleContent = employeeForm;
+  } else if (scheduleContainer.style.display === "block") {
+    visibleContent = scheduleContainer;
+  } else if (faqsContainer.style.display === "block") {
+    visibleContent = faqsContainer;
+  }
+
+  // If content is visible, match its height
+  if (visibleContent) {
+    // Use setTimeout to ensure content has fully rendered
+    setTimeout(() => {
+      const contentHeight = visibleContent.offsetHeight;
+      sidebar.style.height = contentHeight + "px";
+    }, 50); // Small delay to ensure DOM has updated
+  }
+}
+
+// Debounce function for window resize
+let resizeTimeout;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => {
+    updateSidebarHeight();
+  }, 150); // Wait 150ms after resize stops
+});
+
 // toggle employee form visibility
 addEmployeeBtn.addEventListener("click", () => {
   currentEditingEmployeeId = null; // Reset to add mode
@@ -65,6 +110,7 @@ addEmployeeBtn.addEventListener("click", () => {
   } else {
     employeeForm.style.display = "none";
   }
+  updateSidebarHeight(); // Update sidebar height when form visibility changes
 });
 
 // Handle cancel button click
@@ -315,25 +361,76 @@ document.addEventListener("DOMContentLoaded", () => {
 // SCHEDULE GENERATION
 // ============================================
 
+// Pagination state
+let currentPage = 0; // 0-indexed (page 0 = page 1 in display)
+const weeksPerPage = 2; // Show 2 weeks per page
+
 const generateScheduleBtn = document.getElementById("generate-schedule-link");
 const weeksSelect = document.getElementById("weeks-select");
 const regenerateBtn = document.getElementById("regenerate-schedule-btn");
 
+// Pagination controls
+const paginationTop = document.getElementById("schedule-pagination-top");
+const paginationBottom = document.getElementById("schedule-pagination-bottom");
+const prevBtnTop = document.getElementById("prev-page-btn-top");
+const nextBtnTop = document.getElementById("next-page-btn-top");
+const prevBtnBottom = document.getElementById("prev-page-btn-bottom");
+const nextBtnBottom = document.getElementById("next-page-btn-bottom");
+const pageIndicatorTop = document.getElementById("page-indicator-top");
+const pageIndicatorBottom = document.getElementById("page-indicator-bottom");
+
 // Generate schedule when button is clicked
 generateScheduleBtn.addEventListener("click", () => {
+  currentPage = 0; // Reset to first page
   generateSchedule();
   scheduleContainer.style.display = "block";
   employeeForm.style.display = "none";
-  faqsContainer.style.display = "none"; // Hide FAQs
+  faqsContainer.style.display = "none";
+  updateSidebarHeight(); // Update sidebar height after schedule is shown
 });
 
 // Regenerate schedule when weeks change or regenerate button clicked
 regenerateBtn.addEventListener("click", () => {
+  currentPage = 0; // Reset to first page
   generateSchedule();
 });
 
 weeksSelect.addEventListener("change", () => {
+  currentPage = 0; // Reset to first page when weeks change
   generateSchedule();
+});
+
+// Pagination button event listeners
+prevBtnTop.addEventListener("click", () => {
+  if (currentPage > 0) {
+    currentPage--;
+    generateSchedule();
+  }
+});
+
+nextBtnTop.addEventListener("click", () => {
+  const numberOfWeeks = parseInt(weeksSelect.value);
+  const totalPages = Math.ceil(numberOfWeeks / weeksPerPage);
+  if (currentPage < totalPages - 1) {
+    currentPage++;
+    generateSchedule();
+  }
+});
+
+prevBtnBottom.addEventListener("click", () => {
+  if (currentPage > 0) {
+    currentPage--;
+    generateSchedule();
+  }
+});
+
+nextBtnBottom.addEventListener("click", () => {
+  const numberOfWeeks = parseInt(weeksSelect.value);
+  const totalPages = Math.ceil(numberOfWeeks / weeksPerPage);
+  if (currentPage < totalPages - 1) {
+    currentPage++;
+    generateSchedule();
+  }
 });
 
 function generateSchedule() {
@@ -344,18 +441,37 @@ function generateSchedule() {
   if (employees.length === 0) {
     tableWrapper.innerHTML =
       "<p style='text-align: center; color: #666;'>No employees added yet. Please add employees first.</p>";
+    // Hide pagination if no employees
+    paginationTop.style.display = "none";
+    paginationBottom.style.display = "none";
     return;
   }
 
-  // Calculate dates for the schedule
-  const dates = [];
-  const today = new Date();
-  const daysToShow = numberOfWeeks * 7;
+  // Show/hide pagination based on number of weeks
+  const showPagination = numberOfWeeks >= 3;
+  paginationTop.style.display = showPagination ? "flex" : "none";
+  paginationBottom.style.display = showPagination ? "flex" : "none";
 
-  for (let i = 0; i < daysToShow; i++) {
+  // Calculate dates for the schedule
+  const allDates = [];
+  const today = new Date();
+  const totalDays = numberOfWeeks * 7;
+
+  // Generate all dates
+  for (let i = 0; i < totalDays; i++) {
     const date = new Date(today);
     date.setDate(today.getDate() + i);
-    dates.push(date);
+    allDates.push(date);
+  }
+
+  // Calculate which dates to show based on current page
+  let dates;
+  if (showPagination) {
+    const startIndex = currentPage * weeksPerPage * 7;
+    const endIndex = Math.min(startIndex + (weeksPerPage * 7), totalDays);
+    dates = allDates.slice(startIndex, endIndex);
+  } else {
+    dates = allDates; // Show all dates if no pagination
   }
 
   // Create table HTML
@@ -438,13 +554,51 @@ function generateSchedule() {
   tableWrapper.innerHTML = tableHTML;
 
   // Run validation checks and display results (Phase 2 & 3)
-  const violations = validateSchedule(dates, employees);
+  // Use allDates for validation to check all weeks, not just current page
+  const validationDates = showPagination ? allDates : dates;
+  const violations = validateSchedule(validationDates, employees);
   
   // Display warning messages
   displayRuleViolations(violations);
   
-  // Apply visual styling to violated cells
+  // Apply visual styling to violated cells (only for visible dates)
   applyViolationStyling(violations);
+
+  // Update pagination controls if pagination is enabled
+  if (showPagination) {
+    updatePaginationControls(numberOfWeeks);
+  }
+
+  // Update sidebar height after schedule table is rendered
+  updateSidebarHeight();
+}
+
+// Update pagination controls (both top and bottom)
+function updatePaginationControls(numberOfWeeks) {
+  const totalPages = Math.ceil(numberOfWeeks / weeksPerPage);
+  const displayPage = currentPage + 1; // Convert 0-indexed to 1-indexed for display
+
+  // Update page indicators
+  pageIndicatorTop.textContent = `Page ${displayPage} of ${totalPages}`;
+  pageIndicatorBottom.textContent = `Page ${displayPage} of ${totalPages}`;
+
+  // Enable/disable Previous buttons
+  const prevDisabled = currentPage === 0;
+  prevBtnTop.disabled = prevDisabled;
+  prevBtnBottom.disabled = prevDisabled;
+  prevBtnTop.style.opacity = prevDisabled ? "0.5" : "1";
+  prevBtnBottom.style.opacity = prevDisabled ? "0.5" : "1";
+  prevBtnTop.style.cursor = prevDisabled ? "not-allowed" : "pointer";
+  prevBtnBottom.style.cursor = prevDisabled ? "not-allowed" : "pointer";
+
+  // Enable/disable Next buttons
+  const nextDisabled = currentPage === totalPages - 1;
+  nextBtnTop.disabled = nextDisabled;
+  nextBtnBottom.disabled = nextDisabled;
+  nextBtnTop.style.opacity = nextDisabled ? "0.5" : "1";
+  nextBtnBottom.style.opacity = nextDisabled ? "0.5" : "1";
+  nextBtnTop.style.cursor = nextDisabled ? "not-allowed" : "pointer";
+  nextBtnBottom.style.cursor = nextDisabled ? "not-allowed" : "pointer";
 }
 
 // Helper function to format time without am/pm (just the hour number)
