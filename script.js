@@ -1,15 +1,27 @@
 // Track current editing employee ID (null if adding new)
 let currentEditingEmployeeId = null;
 
-// handle showing/hiding add employee form
+// Get DOM elements for content area sections
 const addEmployeeBtn = document.getElementById("add-employee-link");
 const employeeForm = document.getElementById("employee-form");
+const scheduleContainer = document.getElementById("schedule-container");
+const faqsContainer = document.getElementById("faqs-container");
+const faqsBtn = document.getElementById("faqs-link");
+
+// Toggle FAQs visibility
+faqsBtn.addEventListener("click", () => {
+  faqsContainer.style.display = "block";
+  employeeForm.style.display = "none";
+  scheduleContainer.style.display = "none";
+});
 
 // toggle employee form visibility
 addEmployeeBtn.addEventListener("click", () => {
   currentEditingEmployeeId = null; // Reset to add mode
   employeeForm.reset(); // Clear form
   document.getElementById("remove-employee-btn").style.display = "none"; // Hide remove button for new employee
+  faqsContainer.style.display = "none"; // Hide FAQs
+  scheduleContainer.style.display = "none"; // Hide schedule
   if (
     employeeForm.style.display === "none" ||
     employeeForm.style.display === ""
@@ -269,7 +281,6 @@ document.addEventListener("DOMContentLoaded", () => {
 // ============================================
 
 const generateScheduleBtn = document.getElementById("generate-schedule-link");
-const scheduleContainer = document.getElementById("schedule-container");
 const weeksSelect = document.getElementById("weeks-select");
 const regenerateBtn = document.getElementById("regenerate-schedule-btn");
 
@@ -278,6 +289,7 @@ generateScheduleBtn.addEventListener("click", () => {
   generateSchedule();
   scheduleContainer.style.display = "block";
   employeeForm.style.display = "none";
+  faqsContainer.style.display = "none"; // Hide FAQs
 });
 
 // Regenerate schedule when weeks change or regenerate button clicked
