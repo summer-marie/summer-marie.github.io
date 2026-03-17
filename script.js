@@ -389,6 +389,16 @@ function generateSchedule() {
 
   tableHTML += "</tbody></table>";
   tableWrapper.innerHTML = tableHTML;
+
+  // Run validation checks (Phase 2)
+  const violations = validateSchedule(dates, employees);
+  
+  // Log violations for testing (will be displayed in Phase 3)
+  if (Object.keys(violations).length > 0) {
+    console.log("Schedule Violations Found:", violations);
+  } else {
+    console.log("No schedule violations - all rules met!");
+  }
 }
 
 // Helper function to format time without am/pm (just the hour number)
@@ -892,3 +902,193 @@ function updateRulesCount() {
 document.addEventListener("DOMContentLoaded", () => {
   updateRulesCount();
 });
+
+// ============================================
+// VALIDATION ENGINE
+// ============================================
+
+/**
+ * Main validation function - checks all active rules against the schedule
+ * @param {Array} dates - Array of Date objects for the schedule period
+ * @param {Array} employees - Array of employee objects
+ * @returns {Object} Violations object keyed by ruleId, containing violation details
+ */
+function validateSchedule(dates, employees) {
+  const rules = getRules().filter(rule => rule.active);
+  const violations = {};
+
+  rules.forEach(rule => {
+    let ruleViolations = null;
+
+    // Check based on condition type
+    switch (rule.conditionType) {
+      case "minCountPerDay":
+        ruleViolations = checkMinCountPerDay(rule, dates, employees);
+        break;
+      // Future condition types can be added here:
+      // case "maxHoursPerWeek":
+      //   ruleViolations = checkMaxHoursPerWeek(rule, dates, employees);
+      //   break;
+      default:
+        console.warn(`Unknown condition type: ${rule.conditionType}`);
+    }
+
+    // If violations found, add to violations object
+    if (ruleViolations && ruleViolations.violatedDates.length > 0) {
+      violations[rule.id] = ruleViolations;
+    }
+  });
+
+  return violations;
+}
+
+/**
+ * Check minimum count per day condition
+ * @param {Object} rule - The rule to check
+ * @param {Array} dates - Array of Date objects
+ * @param {Array} employees - Array of employee objects
+ * @returns {Object} Violation details or null
+ */
+function checkMinCountPerDay(rule, dates, employees) {
+  const violatedDates = [];
+  
+  // Filter employees by job title (case-insensitive match)
+  const relevantEmployees = employees.filter(emp => 
+    emp.jobTitle.trim().toLowerCase() === rule.jobTitle.trim().toLowerCase()
+  );
+
+  // Check each date
+  dates.forEach((date, dateIndex) => {
+    const dayOfWeek = date.toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
+    
+    // Count how many relevant employees are scheduled on this date
+    const scheduledCount = countScheduledEmployees(relevantEmployees, dayOfWeek);
+
+    // Check if count is below threshold
+    if (scheduledCount < rule.threshold) {
+      violatedDates.push({
+        date: new Date(date), // Clone date object
+        dateIndex: dateIndex,
+        actualCount: scheduledCount,
+        requiredCount: rule.threshold,
+        dayOfWeek: dayOfWeek
+      });
+    }
+  });
+
+  if (violatedDates.length > 0) {
+    return {
+      ruleId: rule.id,
+      ruleName: rule.name,
+      jobTitle: rule.jobTitle,
+      alertLevel: rule.alertLevel,
+      conditionType: rule.conditionType,
+      threshold: rule.threshold,
+      violatedDates: violatedDates
+    };
+  }
+
+  return null;
+}
+
+/**
+ * Count how many employees are scheduled for a specific day
+ * @param {Array} employees - Filtered array of employees for a specific job title
+ * @param {String} dayOfWeek - Day name in lowercase (e.g., "monday")
+ * @returns {Number} Count of scheduled employees
+ */
+function countScheduledEmployees(employees, dayOfWeek) {
+  let count = 0;
+  
+  employees.forEach(employee => {
+    const daySchedule = employee.schedule[dayOfWeek];
+    
+    // Employee is scheduled if available is true and they have start/end times
+    if (daySchedule && 
+        daySchedule.available === true && 
+        daySchedule.start && 
+        daySchedule.end) {
+      count++;
+    }
+  });
+
+  return count;
+}
+
+/**
+ * Get unique job titles from current employees (helper for validation)
+ * @returns {Array} Array of unique job titles
+ */
+function getUniqueJobTitles() {
+  const employees = getEmployees();
+  const titles = employees.map(emp => emp.jobTitle.trim());
+  return [...new Set(titles)].sort();
+}
+
+/**
+ * Test/Debug function - Analyze current schedule against rules
+ * Can be called from browser console for testing
+ * @returns {Object} Analysis results
+ */
+function analyzeSchedule() {
+  const employees = getEmployees();
+  const rules = getRules();
+  const numberOfWeeks = parseInt(document.getElementById("weeks-select").value);
+  
+  // Calculate dates
+  const dates = [];
+  const today = new Date();
+  const daysToShow = numberOfWeeks * 7;
+  
+  for (let i = 0; i < daysToShow; i++) {
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
+    dates.push(date);
+  }
+
+  // Run validation
+  const violations = validateSchedule(dates, employees);
+  
+  // Build analysis report
+  const analysis = {
+    totalEmployees: employees.length,
+    totalRules: rules.length,
+    activeRules: rules.filter(r => r.active).length,
+    scheduleStart: dates[0].toLocaleDateString(),
+    scheduleEnd: dates[dates.length - 1].toLocaleDateString(),
+    violations: violations,
+    violationCount: Object.keys(violations).length,
+    summary: Object.keys(violations).length === 0 
+      ? "✅ All rules satisfied!" 
+      : `⚠️ ${Object.keys(violations).length} rule(s) violated`
+  };
+
+  console.log("=== SCHEDULE ANALYSIS ===");
+  console.log(`Employees: ${analysis.totalEmployees}`);
+  console.log(`Active Rules: ${analysis.activeRules} of ${analysis.totalRules}`);
+  console.log(`Schedule Period: ${analysis.scheduleStart} - ${analysis.scheduleEnd}`);
+  console.log(`\n${analysis.summary}\n`);
+  
+  if (analysis.violationCount > 0) {
+    Object.values(violations).forEach(v => {
+      console.log(`\n❌ Rule: "${v.ruleName}"`);
+      console.log(`   Job Title: ${v.jobTitle}`);
+      console.log(`   Required: ${v.threshold}, Alert Level: ${v.alertLevel}`);
+      console.log(`   Violated Dates (${v.violatedDates.length}):`);
+      v.violatedDates.forEach(d => {
+        const dateStr = d.date.toLocaleDateString("en-US", { 
+          weekday: "short", 
+          month: "numeric", 
+          day: "numeric" 
+        });
+        console.log(`     • ${dateStr}: ${d.actualCount} scheduled (need ${d.requiredCount})`);
+      });
+    });
+  }
+  
+  console.log("\n=========================");
+  return analysis;
+}
+
+// Expose test function globally for console access
+window.analyzeSchedule = analyzeSchedule;
