@@ -15,6 +15,41 @@ faqsBtn.addEventListener("click", () => {
   scheduleContainer.style.display = "none";
 });
 
+// FAQ Accordion functionality
+function initializeFAQAccordion() {
+  const faqSections = document.querySelectorAll('.faq-section');
+  
+  faqSections.forEach(section => {
+    const header = section.querySelector('.faq-header');
+    const toggle = section.querySelector('.faq-toggle');
+    
+    header.addEventListener('click', () => {
+      const isActive = section.classList.contains('active');
+      
+      // Close all other FAQ sections (accordion behavior)
+      faqSections.forEach(otherSection => {
+        if (otherSection !== section) {
+          otherSection.classList.remove('active');
+          const otherToggle = otherSection.querySelector('.faq-toggle');
+          otherToggle.textContent = '▶'; // Change to right arrow (collapsed)
+        }
+      });
+      
+      // Toggle current section
+      if (isActive) {
+        section.classList.remove('active');
+        toggle.textContent = '▶'; // Change to right arrow (collapsed)
+      } else {
+        section.classList.add('active');
+        toggle.textContent = '▼'; // Change to down arrow (expanded)
+      }
+    });
+  });
+}
+
+// Initialize FAQ accordion when page loads
+initializeFAQAccordion();
+
 // toggle employee form visibility
 addEmployeeBtn.addEventListener("click", () => {
   currentEditingEmployeeId = null; // Reset to add mode
