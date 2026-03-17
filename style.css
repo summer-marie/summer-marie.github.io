@@ -641,51 +641,97 @@ h1 {
   font-size: 28px;
 }
 
-/* Individual FAQ section - white card with purple accent */
+/* Individual FAQ section - white card with purple accent (accordion item) */
 .faq-section {
   background-color: white;
-  padding: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   border-radius: 8px;
   border-left: 4px solid #5e4caf; /* Purple accent border matches app theme */
+  overflow: hidden; /* Ensure content doesn't overflow during collapse */
+  transition: all 0.3s ease; /* Smooth transition for all changes */
 }
 
-/* FAQ section headings */
-.faq-section h3 {
+/* FAQ header - clickable area to expand/collapse */
+.faq-header {
+  display: flex;
+  justify-content: space-between; /* Space between h3 and arrow */
+  align-items: center;
+  padding: 20px;
+  cursor: pointer; /* Show it's clickable */
+  user-select: none; /* Prevent text selection on click */
+  transition: background-color 0.2s ease; /* Smooth hover effect */
+}
+
+/* Hover effect on FAQ header */
+.faq-header:hover {
+  background-color: #f9f9f9; /* Light grey on hover */
+}
+
+/* FAQ section headings within clickable header */
+.faq-header h3 {
   color: #5e4caf; /* Purple matches border and app buttons */
-  margin-top: 0;
-  margin-bottom: 15px;
+  margin: 0; /* Remove default margins for clean layout */
   font-size: 20px;
+  font-weight: 600;
+}
+
+/* Toggle arrow indicator (▼ when open, ▶ when closed) */
+.faq-toggle {
+  color: #5e4caf; /* Purple to match heading */
+  font-size: 18px;
+  font-weight: bold;
+  transition: transform 0.3s ease; /* Smooth rotation animation */
+  flex-shrink: 0; /* Prevent arrow from shrinking */
+  margin-left: 15px; /* Space between heading and arrow */
+}
+
+/* FAQ content - collapsible area */
+.faq-content {
+  max-height: 0; /* Collapsed by default */
+  overflow: hidden; /* Hide content when collapsed */
+  transition: max-height 0.4s ease; /* Smooth expand/collapse animation */
+}
+
+/* Active (expanded) FAQ section - taller max-height to show content */
+.faq-section.active .faq-content {
+  max-height: 2000px; /* Large enough to fit any content */
+  padding: 0 20px 20px 20px; /* Add padding when expanded */
 }
 
 /* FAQ paragraphs - readable line height */
-.faq-section p {
+.faq-content p {
   color: #333;
   line-height: 1.6; /* Comfortable reading spacing */
   margin-bottom: 12px;
 }
 
+/* First paragraph - no top margin for clean spacing */
+.faq-content p:first-child {
+  margin-top: 0;
+}
+
 /* Unordered and ordered lists */
-.faq-section ul,
-.faq-section ol {
+.faq-content ul,
+.faq-content ol {
   color: #333;
   line-height: 1.8; /* Extra spacing for list readability */
   margin-left: 20px;
+  margin-top: 0;
 }
 
 /* List items with bottom spacing */
-.faq-section li {
+.faq-content li {
   margin-bottom: 8px;
 }
 
 /* Strong text - navy blue for emphasis */
-.faq-section strong {
+.faq-content strong {
   color: #1e3a5f; /* Navy blue matches schedule theme */
   font-weight: 600;
 }
 
 /* Italic text - lighter grey for tips/notes */
-.faq-section em {
+.faq-content em {
   color: #666;
   font-style: italic;
 }
@@ -1428,20 +1474,31 @@ h1 {
   }
 
   .faq-section {
-    padding: 15px; /* Reduced padding for mobile */
-    margin-bottom: 15px;
+    margin-bottom: 12px; /* Tighter spacing on mobile */
   }
 
-  .faq-section h3 {
+  .faq-header {
+    padding: 15px; /* Reduced padding for mobile */
+  }
+
+  .faq-header h3 {
     font-size: 18px; /* Smaller subheading for mobile */
   }
 
-  .faq-section p {
+  .faq-toggle {
+    font-size: 16px; /* Slightly smaller arrow for mobile */
+  }
+
+  .faq-section.active .faq-content {
+    padding: 0 15px 15px 15px; /* Reduced padding when expanded */
+  }
+
+  .faq-content p {
     font-size: 14px; /* Smaller text for mobile readability */
   }
 
-  .faq-section ul,
-  .faq-section ol {
+  .faq-content ul,
+  .faq-content ol {
     font-size: 14px; /* Smaller list text */
     margin-left: 15px; /* Reduce indent on mobile */
   }
