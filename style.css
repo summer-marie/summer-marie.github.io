@@ -16,67 +16,69 @@ h1 {
 /* Actions Container - Full-width navigation bar */
 .actions-container {
   width: 100%;
-  background-color: #2c3e50;
-  padding: 15px 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: #1a1a2e;
+  padding: 18px 40px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
-  gap: 20px;
+  justify-content: space-between;
 }
 
 .actions-title {
-  color: white;
+  color: #fff;
   margin: 0;
   font-size: 18px;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 600;
-  margin-right: 30px;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+
+/* Navigation links container - centered on Add Employee */
+.actions-nav {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-65%);
 }
 
 .actions-container button {
-  padding: 10px 20px;
+  background: none;
   border: none;
-  border-radius: 5px;
+  color: #e0e0e0;
   cursor: pointer;
-  transition: background-color 0.3s;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
+  padding: 8px 0;
+  transition: all 0.3s ease;
+  text-decoration: none;
   white-space: nowrap;
+  position: relative;
 }
 
-/* Add Employee Button */
-#add-employee-btn {
-  background-color: #5e4caf;
-  color: white;
-}
-
-#add-employee-btn:hover {
-  background-color: #7c7bda;
-}
-
-/* Generate Schedule Button */
-#generate-schedule-btn {
-  background-color: #1e3a5f;
-  color: white;
-}
-
-#generate-schedule-btn:hover {
-  background-color: #2d5a8f;
-}
-
-/* Generate Test Data Button */
+/* Generate Test Data - push to the side */
 #test-data-btn {
-  background-color: #f0842c;
-  color: white;
+  margin-left: 40px;
 }
 
-#test-data-btn:hover {
-  background-color: #f5a936;
+.actions-container button::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #00d9ff;
+  transition: width 0.3s ease;
 }
 
-#generate-schedule-btn:hover {
-  background-color: #5e8bb5;
+.actions-container button:hover {
+  color: #00d9ff;
+}
+
+.actions-container button:hover::after {
+  width: 100%;
 }
 
 /* ============================================
@@ -588,5 +590,3 @@ h1 {
 #cancel-test-form-btn:hover {
   background-color: #5a6268;
 }
-
-
