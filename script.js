@@ -495,16 +495,34 @@ printBtn.addEventListener("click", () => {
   // Generate full schedule with all weeks
   generateFullScheduleForPrint();
   
-  // Trigger print dialog
-  window.print();
-  
-  // Restore original pagination state after print
-  window.onafterprint = () => {
+  // Function to restore original state
+  const restoreOriginalView = () => {
     currentPage = savedPage;
     paginationTop.style.display = savedPaginationTopDisplay;
     paginationBottom.style.display = savedPaginationBottomDisplay;
     generateSchedule(); // Restore original paginated view
   };
+  
+  // Set up afterprint event listener (removes itself after firing once)
+  const afterPrintHandler = () => {
+    restoreOriginalView();
+    window.removeEventListener('afterprint', afterPrintHandler);
+  };
+  window.addEventListener('afterprint', afterPrintHandler);
+  
+  // Trigger print dialog
+  window.print();
+  
+  // Fallback: Also restore after a short delay in case afterprint doesn't fire
+  // This ensures restoration even if browser doesn't support afterprint event
+  setTimeout(() => {
+    // Check if still showing full schedule (afterprint didn't fire)
+    const tableWrapper = document.getElementById("schedule-table-wrapper");
+    if (tableWrapper.innerHTML.includes('page-break-before')) {
+      restoreOriginalView();
+      window.removeEventListener('afterprint', afterPrintHandler);
+    }
+  }, 500);
 });
 
 /**
