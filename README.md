@@ -14,8 +14,8 @@ A comprehensive employee scheduling application with intelligent validation, ava
 - **Add & Edit Employees**: Create employee profiles with job titles and availability preferences
 - **Job Title Grouping**: Employees automatically organized by role in the sidebar
 - **Availability Tracking**: Visual indicators for employee work day preferences
-  - ✓ Available (green check)
-  - ✗ Unavailable (red X)
+  - ✓ Available (green)
+  - ✗ Unavailable (red)
   - Day-specific availability for Monday through Sunday
 - **Local Storage**: All employee data persists in browser storage
 - **Quick Actions**: Edit or delete employees directly from the sidebar list
@@ -81,6 +81,26 @@ A comprehensive employee scheduling application with intelligent validation, ava
 - **Employee Filtering**: Find employees by job title or availability
 - **Conflict Detection**: Automatic identification of scheduling issues
 - **Rule-Based Validation**: Comprehensive checking against all active rules
+
+### 🖨️ Print Capabilities
+- **One-Click Printing**: Print button in schedule controls for instant printing
+- **Clean Print Output**: 
+  - Minimal context - includes only schedule title and table
+  - Black and white styling optimized for readability
+  - All UI elements (sidebar, buttons, navigation) hidden during print
+- **Landscape Orientation**: Automatic landscape mode for better table formatting
+- **Multi-Week Handling**:
+  - 1-2 weeks: Single continuous table
+  - 3-4 weeks: Automatically split into separate 2-week blocks
+  - Page breaks between blocks for clean printing
+  - Week range headings (e.g., "Week 1-2", "Week 3-4") for clarity
+- **State Preservation**: 
+  - Pagination automatically restored after printing
+  - Returns to original view without manual navigation
+- **Print-Ready Styling**: 
+  - Optimized margins (0.5 inch)
+  - Full-width tables to maximize space
+  - Proper page breaks to avoid splitting tables
 
 ## 📱 Mobile Responsive
 - Touch-friendly buttons (44px minimum)
@@ -188,8 +208,8 @@ Tested and supported on:
 
 ## 🔮 Future Enhancements
 - **Database Implementation**: Replace local storage with backend database (SQL/NoSQL) for persistent, scalable data storage
+- **Time Off Request System**: Allow employees to log and track requested days off with approval workflow
 - Import/Export employee and rule data (CSV, JSON formats)
-- Print-optimized schedule views
 - Calendar integration (Google Calendar, Outlook)
 - Email notifications for schedule updates
 - Multi-user collaboration with role-based permissions
