@@ -1152,7 +1152,7 @@ testDataForm.addEventListener("submit", (e) => {
   testDataOverlay.style.display = "none";
   testDataForm.reset();
 
-  alert(`Successfully generated ${numEmployees} test employees!`);
+  showToast(`Successfully generated ${numEmployees} test employees!`, 'success');
 });
 
 /**
