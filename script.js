@@ -141,9 +141,23 @@ function updateSidebarHeight() {
       const contentHeight = visibleContent.offsetHeight;
       sidebar.style.height = contentHeight + "px";
     }, 50); // Small delay to ensure DOM has updated
+  } else {
+    // No content visible - fit to viewport height minus header/nav
+    // Calculate available height: viewport - (h1 + actions-container + margins)
+    const h1 = document.querySelector('h1');
+    const actionsContainer = document.querySelector('.actions-container');
+    const h1Height = h1 ? h1.offsetHeight : 0;
+    const actionsHeight = actionsContainer ? actionsContainer.offsetHeight : 0;
+    
+    // Add some margin buffer (40px top margin for h1, plus some spacing)
+    const offsetBuffer = 80; // Accounts for margins and spacing
+    const availableHeight = window.innerHeight - h1Height - actionsHeight - offsetBuffer;
+    
+    // Set sidebar to fit available viewport space
+    sidebar.style.height = availableHeight + "px";
+    sidebar.style.maxHeight = availableHeight + "px";
   }
 }
-
 // Debounced window resize handler for performance
 let resizeTimeout;
 window.addEventListener("resize", () => {
@@ -190,6 +204,7 @@ cancelFormBtn.addEventListener("click", () => {
   employeeForm.style.display = "none";
   currentEditingEmployeeId = null;
   document.getElementById("remove-employee-btn").style.display = "none";
+  updateSidebarHeight();
 });
 
 /**
@@ -204,6 +219,7 @@ removeEmployeeBtn.addEventListener("click", () => {
     employeeForm.style.display = "none";
     currentEditingEmployeeId = null;
     removeEmployeeBtn.style.display = "none";
+    updateSidebarHeight();
   }
 });
 
@@ -272,6 +288,7 @@ employeeForm.addEventListener("submit", (e) => {
   employeeForm.reset();
   employeeForm.style.display = "none";
   currentEditingEmployeeId = null;
+  updateSidebarHeight();
 });
 
 // ============================================
@@ -463,6 +480,7 @@ function renderEmployeeList() {
  */
 document.addEventListener("DOMContentLoaded", () => {
   renderEmployeeList();
+  updateSidebarHeight(); // Set initial sidebar height on page load
 });
 
 // ============================================
