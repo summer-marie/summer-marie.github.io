@@ -457,6 +457,21 @@ h1 {
   background-color: #5e8bb5;
 }
 
+#print-schedule-btn {
+  padding: 8px 16px;
+  background-color: #1e3a5f;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-weight: 500;
+}
+
+#print-schedule-btn:hover {
+  background-color: #5e8bb5;
+}
+
 /* Schedule Warnings Container - Displays rule violations above table */
 #schedule-warnings {
   margin-bottom: 20px; /* Space between warnings and table */
