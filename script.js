@@ -7,6 +7,40 @@
 // ============================================
 
 // ============================================
+// TOAST NOTIFICATION SYSTEM
+// ============================================
+/**
+ * Show a toast notification
+ * @param {String} message - Message to display
+ * @param {String} type - Toast type: 'success', 'error', 'warning', 'info' (default: 'info')
+ * @param {Number} duration - Duration in milliseconds (default: 3000)
+ */
+function showToast(message, type = 'info', duration = 3000) {
+  const container = document.getElementById('toast-container');
+  
+  // Create toast element
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  
+  // Add to container
+  container.appendChild(toast);
+  
+  // Trigger animation
+  setTimeout(() => {
+    toast.classList.add('show');
+  }, 10);
+  
+  // Remove after duration
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => {
+      container.removeChild(toast);
+    }, 300);
+  }, duration);
+}
+
+// ============================================
 // CONTENT AREA MANAGEMENT
 // ============================================
 // Manages visibility of main content sections: Employee Form, Schedule Display, FAQs
