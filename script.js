@@ -478,6 +478,166 @@ regenerateBtn.addEventListener("click", () => {
 });
 
 /**
+ * Event: Print button clicked
+ * Prints the complete schedule (all weeks) regardless of pagination
+ */
+const printBtn = document.getElementById("print-schedule-btn");
+printBtn.addEventListener("click", () => {
+  // Save current state
+  const savedPage = currentPage;
+  const savedPaginationTopDisplay = paginationTop.style.display;
+  const savedPaginationBottomDisplay = paginationBottom.style.display;
+  
+  // Temporarily hide pagination and show all content
+  paginationTop.style.display = "none";
+  paginationBottom.style.display = "none";
+  
+  // Generate full schedule with all weeks
+  generateFullScheduleForPrint();
+  
+  // Trigger print dialog
+  window.print();
+  
+  // Restore original pagination state after print
+  window.onafterprint = () => {
+    currentPage = savedPage;
+    paginationTop.style.display = savedPaginationTopDisplay;
+    paginationBottom.style.display = savedPaginationBottomDisplay;
+    generateSchedule(); // Restore original paginated view
+  };
+});
+
+/**
+ * Generate complete schedule with all weeks for printing
+ * Splits 3+ weeks into separate 2-week tables for better readability
+ */
+function generateFullScheduleForPrint() {
+  const employees = getEmployees();
+  const numberOfWeeks = parseInt(weeksSelect.value);
+  const tableWrapper = document.getElementById("schedule-table-wrapper");
+
+  if (employees.length === 0) {
+    tableWrapper.innerHTML =
+      "<p style='text-align: center; color: #666;'>No employees added yet. Please add employees first.</p>";
+    return;
+  }
+
+  // Calculate dates for the schedule - ALL dates
+  const allDates = [];
+  const today = new Date();
+  const totalDays = numberOfWeeks * 7;
+
+  // Generate all dates
+  for (let i = 0; i < totalDays; i++) {
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
+    allDates.push(date);
+  }
+
+  // Group employees by job title
+  const groupedEmployees = {};
+  employees.forEach((employee) => {
+    const normalizedTitle = employee.jobTitle.trim().toLowerCase();
+    if (!groupedEmployees[normalizedTitle]) {
+      groupedEmployees[normalizedTitle] = {
+        displayTitle: employee.jobTitle.trim(),
+        employees: []
+      };
+    }
+    groupedEmployees[normalizedTitle].employees.push(employee);
+  });
+
+  // Split into 2-week blocks if 3+ weeks
+  const weeksPerBlock = 2;
+  const totalBlocks = Math.ceil(numberOfWeeks / weeksPerBlock);
+  let fullHTML = '';
+
+  for (let blockIndex = 0; blockIndex < totalBlocks; blockIndex++) {
+    const startWeek = blockIndex * weeksPerBlock + 1;
+    const endWeek = Math.min((blockIndex + 1) * weeksPerBlock, numberOfWeeks);
+    
+    // Calculate date range for this block
+    const blockStartIndex = blockIndex * weeksPerBlock * 7;
+    const blockEndIndex = Math.min(blockStartIndex + (weeksPerBlock * 7), totalDays);
+    const blockDates = allDates.slice(blockStartIndex, blockEndIndex);
+
+    // Add block heading if multiple blocks (3+ weeks total)
+    if (totalBlocks > 1) {
+      if (blockIndex > 0) {
+        fullHTML += '<div style="page-break-before: always;"></div>'; // Page break between blocks
+      }
+      fullHTML += `<h3 style="margin: 20px 0 10px 0; font-size: 14pt;">Week ${startWeek}`;
+      if (endWeek > startWeek) {
+        fullHTML += `-${endWeek}`;
+      }
+      fullHTML += '</h3>';
+    }
+
+    // Create table HTML for this block
+    let tableHTML = '<table class="schedule-table"><thead><tr><th>Employee</th>';
+
+    // Add date headers
+    blockDates.forEach((date, dateIndex) => {
+      const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
+      const dateStr = date.toLocaleDateString("en-US", {
+        month: "numeric",
+        day: "numeric",
+      });
+      tableHTML += `<th data-date-index="${dateIndex}">${dayName}<br>${dateStr}</th>`;
+    });
+
+    tableHTML += "</tr></thead><tbody>";
+
+    // Add rows for each employee group
+    Object.keys(groupedEmployees)
+      .sort()
+      .forEach((normalizedTitle) => {
+        const group = groupedEmployees[normalizedTitle];
+        const jobTitle = group.displayTitle;
+        
+        // Add job title separator row if there are multiple job titles
+        if (Object.keys(groupedEmployees).length > 1) {
+          const colSpan = blockDates.length + 1;
+          tableHTML += `<tr class="job-title-row"><td colspan="${colSpan}" class="job-title-cell">${jobTitle}</td></tr>`;
+        }
+
+        // Add rows for employees in this group
+        group.employees.forEach((employee) => {
+          tableHTML += `<tr data-job-title="${jobTitle}"><td class="employee-name">${employee.firstName} ${employee.lastName}</td>`;
+
+          // Add cells for each date in this block
+          blockDates.forEach((date, dateIndex) => {
+            const dayOfWeek = date
+              .toLocaleDateString("en-US", { weekday: "long" })
+              .toLowerCase();
+            const daySchedule = employee.schedule[dayOfWeek];
+
+            if (
+              daySchedule &&
+              daySchedule.available &&
+              daySchedule.start &&
+              daySchedule.end
+            ) {
+              const startTime = formatTimeSimple(daySchedule.start);
+              const endTime = formatTime(daySchedule.end);
+              tableHTML += `<td class="shift-cell" data-date-index="${dateIndex}" data-job-title="${jobTitle}">${startTime}-${endTime}</td>`;
+            } else {
+              tableHTML += `<td class="shift-cell" data-date-index="${dateIndex}" data-job-title="${jobTitle}">-</td>`;
+            }
+          });
+
+          tableHTML += "</tr>";
+        });
+      });
+
+    tableHTML += "</tbody></table>";
+    fullHTML += tableHTML;
+  }
+
+  tableWrapper.innerHTML = fullHTML;
+}
+
+/**
  * Event: Weeks dropdown changed
  * Resets to first page when user selects different week count
  */

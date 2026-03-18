@@ -1701,3 +1701,124 @@ h1 {
     padding: 1px 5px;
   }
 }
+
+/* ============================================
+   PRINT STYLES
+   ============================================
+   Optimized for printing: shows only schedule table
+   with minimal context, hides all UI elements
+   ============================================ */
+
+@media print {
+  /* Set print page margins and landscape orientation */
+  @page {
+    margin: 0.5in;
+    size: landscape;
+  }
+
+  /* Hide all UI elements except schedule */
+  h1,
+  .actions-container,
+  #employee-list-sidebar,
+  #employee-form,
+  .schedule-controls,
+  .schedule-pagination,
+  #schedule-warnings,
+  #faqs-container,
+  button {
+    display: none !important;
+  }
+
+  /* Force schedule container to be visible */
+  #schedule-container {
+    display: block !important;
+  }
+
+  /* Keep schedule header (just the h2 title) visible */
+  .schedule-header {
+    display: block !important;
+    margin-bottom: 20px;
+  }
+
+  .schedule-header h2 {
+    display: block !important;
+    color: #000;
+    font-size: 18pt;
+    margin: 0 0 15px 0;
+  }
+
+  /* Week block headings for multi-week schedules */
+  #schedule-table-wrapper h3 {
+    color: #000;
+    font-size: 14pt;
+    margin: 20px 0 10px 0;
+    font-weight: bold;
+  }
+
+  /* Optimize table for printing */
+  #schedule-table-wrapper {
+    display: block !important;
+  }
+
+  .schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #000;
+    background: #fff;
+  }
+
+  .schedule-table th,
+  .schedule-table td {
+    border: 1px solid #000;
+    padding: 6px;
+    font-size: 9pt;
+    color: #000;
+    background: #fff !important;
+  }
+
+  .schedule-table th {
+    font-weight: bold;
+    background: #fff !important;
+  }
+
+  /* Job title rows */
+  .job-title-row {
+    background: #fff !important;
+  }
+
+  .job-title-cell {
+    font-weight: bold;
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  /* Employee names */
+  .employee-name {
+    font-weight: 500;
+    background: #fff !important;
+  }
+
+  /* Remove all background colors and colored borders */
+  .shift-cell {
+    background: #fff !important;
+    border-color: #000 !important;
+  }
+
+  /* Ensure body and main container are clean */
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  .main-container {
+    display: block;
+    margin: 0;
+    padding: 0;
+  }
+
+  .content-area {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+}
